@@ -36,6 +36,7 @@ public class LaunchTestBangBang extends OpMode {
         telemetry.addData("Current encoder:", launchMotor.getCurrentPosition());
 
         flywheel.setTargetRPM(targetVelocity);
+        flywheel.tick();
 
         if (lastY && !gamepad1.y) targetVelocity += 50;
         if (lastA && !gamepad1.a) targetVelocity -= 50;
