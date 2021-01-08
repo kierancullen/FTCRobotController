@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import java.text.DecimalFormat;
@@ -25,8 +26,8 @@ public class LaunchTestBangBang extends OpMode {
 
     public void init() {
         launchMotor = (DcMotorEx)hardwareMap.get(DcMotor.class, "launch");
+        launchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheel = new BangBangFlywheel(launchMotor, PPR);
-        flywheel.start();
     }
 
     public void loop() {
@@ -37,6 +38,13 @@ public class LaunchTestBangBang extends OpMode {
 
         flywheel.setTargetRPM(targetVelocity);
         flywheel.tick();
+
+        if (gamepad1.x) {
+            flywheel.start();
+        }
+        if (gamepad1.b) {
+            flywheel.stop();
+        }
 
         if (lastY && !gamepad1.y) targetVelocity += 50;
         if (lastA && !gamepad1.a) targetVelocity -= 50;
