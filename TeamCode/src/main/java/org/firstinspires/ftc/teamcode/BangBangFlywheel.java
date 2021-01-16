@@ -24,13 +24,15 @@ public class BangBangFlywheel {
     }
 
     public void start() {
-        this.state = FlywheelState.STARTING;
-        this.tick();
+        if (this.state == FlywheelState.STOPPED) {
+            this.state = FlywheelState.STARTING;
+        }
     }
 
     public void stop() {
-        this.state = FlywheelState.STOPPED;
-        this.tick();
+        if (this.state != FlywheelState.STOPPED) {
+            this.state = FlywheelState.STOPPED;
+        }
     }
 
     public void tick() {
