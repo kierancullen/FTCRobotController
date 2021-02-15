@@ -14,7 +14,7 @@ public class Odometer {
     public double delta;
     public double totalDelta;
 
-    private double ticksPerUnit;
+    public double ticksPerUnit;
     public double radius;
 
     public Odometer (DcMotor encoder, boolean invert, double ticksPerUnit, double radius) {

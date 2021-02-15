@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.MathHelper.wrapAngle;
 
 public class Localizer {
@@ -10,6 +11,8 @@ public class Localizer {
     public double robotAngle;
 
     private double lastResetAngle; //Using for absolute turn calculations
+
+    public double turnScalingFactor;
 
     public Localizer(Odometer left, Odometer right, Odometer center) {
         this.left = left;
@@ -32,7 +35,9 @@ public class Localizer {
 
         double deltaAngle = ((right.delta - left.delta) / 2) / ((right.radius + left.radius) / 2); //Average of the two values divided by average of the radius (with is the same anyway); counterclockwise rotation is positive
 
-        double absoluteAngle = wrapAngle(((right.totalDelta - left.totalDelta)/2 / ((right.radius + left.radius) / 2)) + lastResetAngle);
+        double absoluteAngle = ((right.totalDelta * right.ticksPerUnit) - (left.totalDelta * left.ticksPerUnit)) * 0.0003210621005201 + lastResetAngle; //0.0003210621005201  wrapAngle(((right.totalDelta - left.totalDelta)/2 / ((right.radius + left.radius) / 2)) + lastResetAngle);
+
+        turnScalingFactor = ((2*Math.PI)-lastResetAngle) / ((right.totalDelta * right.ticksPerUnit) - (left.totalDelta * left.ticksPerUnit));
 
         double xError = (deltaAngle * center.radius); // If we turn counterclockwise (positive), the center odometer will track right (positive)
 
