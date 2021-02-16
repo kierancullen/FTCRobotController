@@ -26,7 +26,6 @@ public class UserControl extends BaseOpmode {
         telemetry.addData("Localizer x:", localizer.robotPosition.x);
         telemetry.addData("Localizer y:", localizer.robotPosition.y);
         telemetry.addData("Localizer angle", Math.toDegrees(localizer.robotAngle));
-        telemetry.addData("Turn scaling factor", localizer.turnScalingFactor);
     }
 
 }

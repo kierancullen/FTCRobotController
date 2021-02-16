@@ -11,7 +11,7 @@ public class BaseOpmode extends OpMode {
     final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI);
     final double odometryLeftRadius = 19.674; //(6 * 2.54) + (4.4); //4.473
     final double odometryRightRadius = 19.674; //(6 * 2.54) + (4.4);
-    final double odometryCenterRadius = (6.75 * 2.54) - (4.4);
+    final double odometryCenterRadius = (6.75 * 2.54) - (4.434);
 
     final double odometryRightBias = 0.9970;
     final double odometryLeftBias = 1.0;
