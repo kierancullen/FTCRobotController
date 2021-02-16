@@ -13,7 +13,7 @@ public class BaseOpmode extends OpMode {
     final double odometryRightRadius = 19.674; //(6 * 2.54) + (4.4);
     final double odometryCenterRadius = (6.75 * 2.54) - (4.4);
 
-    final double odometryRightBias = 0.9975;
+    final double odometryRightBias = 0.9970;
     final double odometryLeftBias = 1.0;
     final double odometryCenterBias = 1.0;
 
