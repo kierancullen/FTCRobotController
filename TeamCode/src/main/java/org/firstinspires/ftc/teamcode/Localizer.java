@@ -38,7 +38,7 @@ public class Localizer {
         double xError = (deltaAngle * center.radius); // If we turn counterclockwise (positive), the center odometer will track right (positive)
 
         double deltaY = (right.delta + left.delta) / 2;
-        double deltaX = center.delta + xError;
+        double deltaX = center.delta - xError;
 
 
         if (Math.abs(deltaAngle) > 0) {
