@@ -46,7 +46,7 @@ public class Localizer {
             double strafeRadius = (deltaX / deltaAngle);
 
             deltaY = (movementRadius * Math.sin(deltaAngle)) - (strafeRadius * (1-Math.cos(deltaAngle)));
-            deltaX = (movementRadius * (1-Math.cos(deltaAngle))) + (strafeRadius * Math.sin(deltaAngle));
+           // deltaX = (movementRadius * (1-Math.cos(deltaAngle))) + (strafeRadius * Math.sin(deltaAngle));
 
         }
 
