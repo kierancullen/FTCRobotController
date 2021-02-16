@@ -9,9 +9,13 @@ public class BaseOpmode extends OpMode {
     Localizer localizer;
 
     final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI);
-    final double odometryLeftRadius = (6 * 2.54) + (4.39); //4.473
-    final double odometryRightRadius = (6 * 2.54) + (4.39);
-    final double odometryCenterRadius = (6.75 * 2.54) - (4.39);
+    final double odometryLeftRadius = 19.674; //(6 * 2.54) + (4.4); //4.473
+    final double odometryRightRadius = 19.674; //(6 * 2.54) + (4.4);
+    final double odometryCenterRadius = (6.75 * 2.54) - (4.4);
+
+    final double odometryRightBias = 0.9975;
+    final double odometryLeftBias = 1.0;
+    final double odometryCenterBias = 1.0;
 
     public void init() {
 
@@ -21,9 +25,9 @@ public class BaseOpmode extends OpMode {
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
 
         drivetrain = new Drivetrain(tl, tr, bl, br, gamepad1);
-        Odometer left = new Odometer(br, true, odometryTicksPerUnit, odometryLeftRadius);
-        Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius);
-        Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius);
+        Odometer left = new Odometer(br, true, odometryTicksPerUnit, odometryLeftRadius, odometryLeftBias);
+        Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius, odometryCenterBias);
+        Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
 
         localizer = new Localizer(left, right, center);
     }
