@@ -7,6 +7,7 @@ public class BaseOpmode extends OpMode {
 
     Drivetrain drivetrain;
     Localizer localizer;
+    Intake intake;
 
     final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI);
     final double odometryLeftRadius = 19.674; //(6 * 2.54) + (4.4); //4.473
@@ -30,18 +31,22 @@ public class BaseOpmode extends OpMode {
         Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
 
         localizer = new Localizer(left, right, center);
+
+        DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        intake = new Intake(intakeMotor);
     }
 
 
     public void start() {
         localizer.setPosition(new Point(0,0), 0); //Make sure we're at the origin
+        intake.initialize();;
     }
 
 
     public void loop() {
         drivetrain.update();
         localizer.update();
-
+        intake.update(gamepad1.right_bumper, gamepad1.left_bumper);
         telemetry.update();
     }
 }
