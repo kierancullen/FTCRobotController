@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class Intake {
 
     DcMotorEx intakeMotor;
-    final double PPR = 28.0;
+    final double PPR = 28.0 * 3.7;
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.9;
-    final double reversePower = 0.5;
+    final double forwardPower = 0.75;
+    final double reversePower = -0.3;
 
     enum state {
         running,
