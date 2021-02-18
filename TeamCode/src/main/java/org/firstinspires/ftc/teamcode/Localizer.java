@@ -9,6 +9,9 @@ public class Localizer {
 
     public Point robotPosition;
     public double robotAngle;
+    public double deltaX;
+    public double deltaY;
+    public double deltaAngle;
 
     private double lastResetAngle; //Using for absolute turn calculations
 
@@ -31,14 +34,14 @@ public class Localizer {
         right.update();
         center.update();
 
-        double deltaAngle = ((right.delta - left.delta) / 2) / ((right.radius + left.radius) / 2); //Average of the two values divided by average of the radius (with is the same anyway); counterclockwise rotation is positive
+        deltaAngle = ((right.delta - left.delta) / 2) / ((right.radius + left.radius) / 2); //Average of the two values divided by average of the radius (with is the same anyway); counterclockwise rotation is positive
 
         double absoluteAngle = wrapAngle(((right.totalDelta - left.totalDelta)/2 / ((right.radius + left.radius) / 2)) + lastResetAngle);
 
         double xError = (deltaAngle * center.radius); // If we turn counterclockwise (positive), the center odometer will track right (positive)
 
-        double deltaY = (right.delta + left.delta) / 2;
-        double deltaX = center.delta - xError;
+        deltaY = (right.delta + left.delta) / 2;
+        deltaX = center.delta - xError;
 
 
         if (Math.abs(deltaAngle) > 0) {
@@ -46,7 +49,7 @@ public class Localizer {
             double strafeRadius = (deltaX / deltaAngle);
 
             deltaY = (movementRadius * Math.sin(deltaAngle)) - (strafeRadius * (1-Math.cos(deltaAngle)));
-           // deltaX = (movementRadius * (1-Math.cos(deltaAngle))) + (strafeRadius * Math.sin(deltaAngle));
+            deltaX = (movementRadius * (1-Math.cos(deltaAngle))) + (strafeRadius * Math.sin(deltaAngle));
 
         }
 

@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Intake {
 
-    DcMotorEx intakeMotor;
+    private DcMotorEx intakeMotor;
     final double PPR = 28.0 * 3.7;
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.75;
+    final double forwardPower = 0.95;
     final double reversePower = -0.3;
 
     enum state {
@@ -20,9 +20,9 @@ public class Intake {
         stopped
     }
 
-    state currentState;
-    state lastState;
-    long timeAtStateStart;
+    public state currentState;
+    public state lastState;
+    private long timeAtStateStart;
 
     public Intake (DcMotor intakeMotor) {
         this.intakeMotor = (DcMotorEx)intakeMotor;
@@ -44,10 +44,10 @@ public class Intake {
             if (reverse) {
                 currentState = state.reversing;
             }
-            else if (trigger && (System.currentTimeMillis() - timeAtStateStart > 500)) {
+            else if (trigger && (timeElapsedInState() > 500)) {
                 currentState = state.stopped;
             }
-            else if (currentVelocity < stallThreshold && (System.currentTimeMillis() - timeAtStateStart > 500)) { //some quick stall detection
+            else if (currentVelocity < stallThreshold && (timeElapsedInState() > 500)) { //some quick stall detection
                 currentState = state.unjamming;
             }
 
@@ -62,14 +62,14 @@ public class Intake {
 
         else if (currentState == state.stopped) {
             intakeMotor.setPower(0);
-            if (trigger && (System.currentTimeMillis() - timeAtStateStart > 500)) {
+            if (trigger && (timeElapsedInState() > 500)) {
                 currentState = state.running;
             }
         }
 
         else if (currentState == state.unjamming) {
             intakeMotor.setPower(reversePower);
-            if ((System.currentTimeMillis() - timeAtStateStart > reverseTime)) {
+            if (timeElapsedInState() > reverseTime) {
                 currentState = state.running;
             }
             else if (trigger) {
@@ -83,6 +83,10 @@ public class Intake {
             timeAtStateStart = System.currentTimeMillis();
         }
         lastState = currentState;
+    }
+
+    private long timeElapsedInState() {
+        return System.currentTimeMillis() - timeAtStateStart;
     }
 
 

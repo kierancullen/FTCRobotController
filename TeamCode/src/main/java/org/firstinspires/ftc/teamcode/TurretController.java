@@ -103,7 +103,7 @@ public class TurretController {
             blockServo.setPosition(BLOCKSERVO_OUT);
             flywheel.setTargetRPM(launchRPM);
             flywheel.start();
-            if (goLaunch && flywheel.getState() == BangBangFlywheel.FlywheelState.RUNNING) {
+            if (goLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
                 state = TurretState.LAUNCH_PUSH;
                 disksRemaining -= 1;
             }

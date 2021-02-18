@@ -2,21 +2,27 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class BangBangFlywheel {
 
-    public enum FlywheelState {STOPPED, STARTING, RUNNING};
+    enum state {
+        stopped,
+        starting,
+        running
+    }
 
-    private DcMotorEx motor;
-    private FlywheelState state;
+    private DcMotorEx flywheelMotor;
+    public state currentState;
     private double targetRPM;
-    private double pulsesPerRevolution;
+    private double PPR;
 
-    public BangBangFlywheel(DcMotor motor, double pulsesPerRevolution) {
-        this.motor = (DcMotorEx)motor;
-        this.pulsesPerRevolution = pulsesPerRevolution;
-        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    public BangBangFlywheel(DcMotor flywheelMotor, double PPR) {
+        this.flywheelMotor = (DcMotorEx) flywheelMotor;
+        this.PPR = PPR;
+        this.flywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.flywheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void setTargetRPM(double targetRPM) {
@@ -24,43 +30,39 @@ public class BangBangFlywheel {
     }
 
     public void start() {
-        if (this.state == FlywheelState.STOPPED) {
-            this.state = FlywheelState.STARTING;
+        if (this.currentState == state.stopped) {
+            this.currentState = state.starting;
         }
     }
 
     public void stop() {
-        if (this.state != FlywheelState.STOPPED) {
-            this.state = FlywheelState.STOPPED;
+        if (this.currentState != state.stopped) {
+            this.currentState = state.stopped;
         }
     }
 
-    public void tick() {
-        if (this.state == FlywheelState.STOPPED) {
-            this.motor.setPower(0);
+    public void update() {
+        if (this.currentState == state.stopped) {
+            this.flywheelMotor.setPower(0);
         }
-        else if (this.state == FlywheelState.STARTING) {
-            this.motor.setPower(1);
+        else if (this.currentState == state.starting) {
+            this.flywheelMotor.setPower(1);
             if (this.getCurrentRPM() >= this.targetRPM) {
-                this.state = FlywheelState.RUNNING;
+                this.currentState = state.running;
             }
         }
-        else if (this.state == FlywheelState.RUNNING) {
+        else if (this.currentState == state.running) {
             if (this.getCurrentRPM() >= this.targetRPM) {
-                this.motor.setPower(0);
+                this.flywheelMotor.setPower(0);
             }
             else {
-                this.motor.setPower(1);
+                this.flywheelMotor.setPower(1);
             }
         }
-    }
-
-    public FlywheelState getState() {
-        return this.state;
     }
 
     private double getCurrentRPM() {
-        return Math.abs(this.motor.getVelocity()) / this.pulsesPerRevolution * 60.0;
+        return Math.abs(this.flywheelMotor.getVelocity()) / this.PPR * 60.0;
     }
 
 }

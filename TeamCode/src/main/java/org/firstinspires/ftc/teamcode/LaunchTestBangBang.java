@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import java.text.DecimalFormat;
 
@@ -37,7 +36,7 @@ public class LaunchTestBangBang extends OpMode {
         telemetry.addData("Current encoder:", launchMotor.getCurrentPosition());
 
         flywheel.setTargetRPM(targetVelocity);
-        flywheel.tick();
+        flywheel.update();
 
         if (gamepad1.x) {
             flywheel.start();
