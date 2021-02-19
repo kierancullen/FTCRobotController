@@ -317,5 +317,12 @@ public class Follower {
         return value;
     }
 
+    public double angleTo(Point target) {
+        return Math.atan2(target.y - localizer.robotPosition.y, target.x - localizer.robotPosition.x);
+    }
+
+    public double distanceTo(Point target) {
+        return Math.sqrt(Math.pow(target.x-localizer.robotPosition.x, 2) + Math.pow(target.y-localizer.robotPosition.y, 2));
+    }
 
 }

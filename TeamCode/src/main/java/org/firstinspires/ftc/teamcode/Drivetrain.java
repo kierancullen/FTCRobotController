@@ -8,17 +8,13 @@ public class Drivetrain {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
-    public boolean gamepadControl;
-
     final private double differentialMax = 1.0;
     final private double strafeMax = 1.0;
 
     public Point translateVelocity;
     public double turnVelocity;
 
-    Gamepad controller;
-
-    public Drivetrain(DcMotor topLeft, DcMotor topRight, DcMotor backLeft, DcMotor backRight, Gamepad controller) {
+    public Drivetrain(DcMotor topLeft, DcMotor topRight, DcMotor backLeft, DcMotor backRight) {
         this.frontLeft = topLeft;
         this.frontRight = topRight;
         this.backLeft = backLeft;
@@ -39,9 +35,6 @@ public class Drivetrain {
         this.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.controller = controller;
-
-        gamepadControl = true;
 
         translateVelocity = new Point();
         translateVelocity.x = 0;
@@ -50,11 +43,6 @@ public class Drivetrain {
     }
 
     public void update() {
-
-        if (gamepadControl) {
-            setVelocityFromGamepad();
-        }
-
         setPowers();
     }
 
@@ -87,7 +75,7 @@ public class Drivetrain {
         frontRight.setPower(tr_power_raw);
     }
 
-    private void setVelocityFromGamepad() {
+    public void setVelocityFromGamepad(Gamepad controller) {
         double horiz;
         double l;
         double r;

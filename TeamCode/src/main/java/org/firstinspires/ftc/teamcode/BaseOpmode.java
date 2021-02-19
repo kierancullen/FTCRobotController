@@ -24,8 +24,6 @@ public class BaseOpmode extends OpMode {
     final double odometryLeftBias = 1.0;
     final double odometryCenterBias = 1.0;
 
-    final double launchRPM = 3600;
-
     public void init() {
 
         DcMotor tl = hardwareMap.get(DcMotor.class, "tl");
@@ -33,7 +31,7 @@ public class BaseOpmode extends OpMode {
         DcMotor bl = hardwareMap.get(DcMotor.class, "bl");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
 
-        drivetrain = new Drivetrain(tl, tr, bl, br, gamepad1);
+        drivetrain = new Drivetrain(tl, tr, bl, br);
         Odometer left = new Odometer(br, true, odometryTicksPerUnit, odometryLeftRadius, odometryLeftBias);
         Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius, odometryCenterBias);
         Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
@@ -63,20 +61,11 @@ public class BaseOpmode extends OpMode {
         intake.initialize();
         launcher.initialize();
         follower.initialize();
-        drivetrain.gamepadControl = false;
         drivetrain.setBrake(true);
     }
 
-    int i;
     public void loop() {
         localizer.update();
-        intake.update(gamepad1.right_bumper, gamepad1.left_bumper);
-        launcher.update(launchRPM, gamepad1.dpad_up, gamepad1.y, gamepad1.a, gamepad1.b);
-        follower.goToWaypoint(new Waypoint(new Point(50,200), Math.toRadians(0), 0, 1.0, 0.9, 70, Math.toRadians(40)), true);
-        //follower.goToSimple(new Point(100, 100), Math.toRadians(0), 1.0, 0.5, Math.toRadians(60), 0.5, false);
-        //follower.goTo(new Point (100,100), Math.toRadians(0), 1.0, 0.5);
-        telemetry.addData("x state", follower.movementXState);
-        telemetry.addData("y state:", follower.movementYState);
         telemetry.addData("turn state:", follower.turningState);
         telemetry.addData("localizer x:", localizer.robotPosition.x);
         telemetry.addData("localizer y:", localizer.robotPosition.y);
