@@ -7,9 +7,9 @@ public class Launcher {
 
     private static double tiltServoUp = 0.12;
     private static double tiltServoDown = 0;
-    private static double pushServoIn = 0.345;
-    private static double pushServoOut = 0.235;
-    private static long strokeTime = 150; // In one direction (in/out time assumed same)
+    private static double pushServoIn = 0.27;
+    private static double pushServoOut = 0.215;
+    private static long strokeTime = 70; // In one direction (in/out time assumed same)
 
     private BangBangFlywheel flywheel;
 

@@ -17,7 +17,8 @@ public class UserControl extends BaseOpmode {
 
     public void start() {
         super.start();
-        localizer.setPosition(new Point(304.8,21.955),  Math.toRadians(90)); //whatever the start position is after auto, actually
+        localizer.setPosition(new Point(213.16,21.955),  Math.toRadians(90)); //whatever the start position is after auto, actually
+        //x was 304.8
         positioner.initialize();
     }
 
@@ -27,6 +28,8 @@ public class UserControl extends BaseOpmode {
 
         if (!xLast && gamepad1.x) toggleNavigation = !toggleNavigation;
         xLast = gamepad1.x;
+        if (gamepad1.right_stick_button) LaunchRPM+= 10;
+        if (gamepad1.left_stick_button) LaunchRPM-= 10;
 
         telemetry.addData("Launch RPM:", LaunchRPM);
         telemetry.addData("Distance to target", follower.distanceTo(launchingTarget));
@@ -49,7 +52,15 @@ public class UserControl extends BaseOpmode {
 
     public double getLaunchRPM() {
         double distanceToTarget = follower.distanceTo(launchingTarget);
-        return (-4.537 * distanceToTarget) + 5429.8;
+        if (distanceToTarget > 335.28) {
+            return (8.206 * distanceToTarget) + 978.58;
+        }
+        else if (distanceToTarget < 335.28 && distanceToTarget > 200.84) {
+            return (-0.984 * distanceToTarget) + 4060;
+        }
+        else {
+            return (-16.73 * distanceToTarget) + 7900;
+        }
     }
 
 }
