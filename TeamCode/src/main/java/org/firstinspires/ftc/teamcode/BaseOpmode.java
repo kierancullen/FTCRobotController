@@ -72,7 +72,7 @@ public class BaseOpmode extends OpMode {
         localizer.update();
         intake.update(gamepad1.right_bumper, gamepad1.left_bumper);
         launcher.update(launchRPM, gamepad1.dpad_up, gamepad1.y, gamepad1.a, gamepad1.b);
-        follower.goToWaypoint(new Waypoint(new Point(100,100), Math.toRadians(90), 0, 1.0, 0.5, 70, Math.toRadians(40)), true);
+        follower.goToWaypoint(new Waypoint(new Point(100,100), Math.toRadians(180), 0, 1.0, 0.5, 70, Math.toRadians(40)), true);
         //follower.goToSimple(new Point(100, 100), Math.toRadians(0), 1.0, 0.5, Math.toRadians(60), 0.5, false);
         //follower.goTo(new Point (100,100), Math.toRadians(0), 1.0, 0.5);
         telemetry.addData("x state", follower.movementXState);
