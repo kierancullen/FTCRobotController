@@ -43,7 +43,7 @@ public class Follower {
         double distanceToPoint = Math.sqrt(Math.pow(target.x-localizer.robotPosition.x, 2) + Math.pow(target.y-localizer.robotPosition.y, 2));
 
         double angleToPoint = Math.atan2(target.y - localizer.robotPosition.y, target.x - localizer.robotPosition.x);
-        double deltaAngleToPoint = MathHelper.wrapAngle(angleToPoint-(localizer.robotAngle)); //check this
+        double deltaAngleToPoint = MathHelper.wrapAngle(angleToPoint-(localizer.robotAngle-Math.toRadians(90))); //check this
 
         double relativeX = Math.cos(deltaAngleToPoint) * distanceToPoint;
         double relativeY = Math.sin(deltaAngleToPoint) * distanceToPoint;
@@ -129,7 +129,7 @@ public class Follower {
         double distanceToPoint = Math.sqrt(Math.pow(targetAdjusted.x-localizer.robotPosition.x, 2) + Math.pow(targetAdjusted.y-localizer.robotPosition.y, 2));
 
         double angleToPoint = Math.atan2(targetAdjusted.y - localizer.robotPosition.y, targetAdjusted.x - localizer.robotPosition.x);
-        double deltaAngleToPoint = MathHelper.wrapAngle(angleToPoint-(localizer.robotAngle)); //check this
+        double deltaAngleToPoint = MathHelper.wrapAngle(angleToPoint-(localizer.robotAngle-Math.toRadians(90))); //check this
 
         double relativeX = Math.cos(deltaAngleToPoint) * distanceToPoint;
         double relativeY = Math.sin(deltaAngleToPoint) * distanceToPoint;
@@ -141,8 +141,8 @@ public class Follower {
         double powerY = (relativeY / (relativeYAbs + relativeXAbs));
 
         if (!moveThrough) {
-            powerX *= relativeXAbs / 30.0;
-            powerY *= relativeYAbs / 30.0;
+            powerX *= relativeXAbs / 40.0;
+            powerY *= relativeYAbs / 40.0;
         }
 
         powerX = Range.clip(powerX, -movementSpeed, movementSpeed);
@@ -159,7 +159,7 @@ public class Follower {
 
         powerTurn = Range.clip(powerTurn, -turnSpeed, turnSpeed);
 
-        if (distanceToPoint < 10) {
+        if (distanceToPoint < 30) {
             powerTurn = 0; //Prevents orbiting
         }
 

@@ -19,6 +19,7 @@ public class SpeedTracker {
 
     public SpeedTracker(Localizer localizer) {
         this.localizer = localizer;
+        currentSpeed = new Point (0,0);
     }
 
     public void update() {
