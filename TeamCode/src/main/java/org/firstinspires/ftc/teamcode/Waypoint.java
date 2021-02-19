@@ -17,5 +17,7 @@ public class Waypoint {
         this.driveAngle = driveAngle;
         this.goToSpeed = goToSpeed;
         this.goToSpeedTurn = goToSpeedTurn;
+        this.slowDownDistance = slowDownDistance;
+        this.slowDownAngle = slowDownAngle;
     }
 }
