@@ -209,8 +209,10 @@ public class Follower {
         double powerY = (relativeY / (relativeYAbs + relativeXAbs));
 
         if (movementYState == state.zooming) {
+            powerY *= relativeYAbs / target.slowDownDistance;
             powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
-            if(relativeYAbs < target.slowDownDistance && stable) {
+            powerY *= Range.clip((relativeYAbs/6.0), 0, 1);
+            if(relativeYAbs < target.slowDownDistance && stable && false) {
                 movementYState = state.decelerating;
             }
         }
@@ -218,7 +220,7 @@ public class Follower {
         if (movementYState == state.decelerating) {
             powerY *= relativeYAbs / target.slowDownDistance;
             powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
-            if (Math.abs(tracker.currentSpeed.y) < 3) {
+            if (relativeYAbs < 5) {
                 movementYState = movementYState.adjusting;
             }
         }
@@ -230,8 +232,10 @@ public class Follower {
         }
 
         if (movementXState == state.zooming) {
+            powerX *= relativeXAbs / target.slowDownDistance;
             powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
-            if(relativeXAbs < target.slowDownDistance && stable) {
+            powerX *= Range.clip((relativeXAbs/6.0), 0, 1);
+            if(relativeXAbs < target.slowDownDistance && stable && false) {
                 movementXState = state.decelerating;
             }
         }
@@ -239,7 +243,7 @@ public class Follower {
         if (movementXState == state.decelerating) {
             powerX *= relativeXAbs / target.slowDownDistance;
             powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
-            if (Math.abs(tracker.currentSpeed.x) < 3) {
+            if (relativeXAbs < 5) {
                 movementXState = movementYState.adjusting;
             }
         }
@@ -260,22 +264,32 @@ public class Follower {
         double powerTurn = 0;
 
         if (turningState == state.zooming) {
-            powerTurn = (relativeHeadingAdjusted/target.slowDownAngle);
+            powerTurn = (relativeHeadingAdjusted/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
-            if (relativeXAbs < target.slowDownDistance && relativeYAbs < target.slowDownDistance && stable) {
+            powerTurn *= Range.clip(Math.abs(relativeHeading)/Math.toRadians(2), 0, 1);
+            if (distanceToPoint < 30) powerTurn = 0;
+            if (relativeXAbs < target.slowDownDistance && relativeYAbs < target.slowDownDistance && stable && false) {
                 turningState = state.adjusting;
             }
         }
 
         if (turningState == state.adjusting) {
-            powerTurn = (staticTurnDistance/target.slowDownAngle);
+            powerTurn = (staticTurnDistance/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
             powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(2), 0, 1);
 
         }
+
         drivetrain.turnVelocity = powerTurn;
         drivetrain.translateVelocity.x = powerX;
         drivetrain.translateVelocity.y = powerY;
+        double turnErrorScale = Range.clip(1.0-Math.abs(relativeHeading/Math.toRadians(60)), 0.5, 1);
+        if (Math.abs(drivetrain.turnVelocity) < 0.0001) {
+            turnErrorScale = 1.0;
+        }
+
+        drivetrain.translateVelocity.x *= turnErrorScale;
+        drivetrain.translateVelocity.y *= turnErrorScale;
     }
 
     double xMin = 0.11;
