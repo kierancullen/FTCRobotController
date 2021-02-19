@@ -218,6 +218,7 @@ public class Follower {
         if (movementYState == state.decelerating) {
             powerY *= relativeYAbs / target.slowDownDistance;
             powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
+            powerY = minPower(powerY, yMin*2); //Don't want to go under the minimum power when we're too far away
             if (relativeYAbs < 5) {
                 movementYState = movementYState.adjusting;
             }
@@ -238,6 +239,7 @@ public class Follower {
         if (movementXState == state.decelerating) {
             powerX *= relativeXAbs / target.slowDownDistance;
             powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
+            powerX = minPower(powerX, xMin*2); //Don't want to go under the minimum power when we're too far away
             if (relativeXAbs < 5) {
                 movementXState = movementYState.adjusting;
             }
@@ -268,8 +270,14 @@ public class Follower {
         if (turningState == state.adjusting) {
             powerTurn = (staticTurnDistance/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
-            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(2), 0, 1);
+            powerTurn = minPower(powerTurn, turnMin);
+            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(1), 0, 1);
 
+        }
+
+        if(relativeXAbs == 0 && relativeYAbs == 0) {
+            powerX = 0;
+            powerY = 0;
         }
 
         drivetrain.turnVelocity = powerTurn;
