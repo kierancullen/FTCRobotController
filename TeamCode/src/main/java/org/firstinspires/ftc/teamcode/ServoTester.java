@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+//A quick class that I was using to test an array of servos
+
 public class ServoTester {
     Servo[] servos;
     double[] servoPowers;

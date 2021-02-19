@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+//A class that represents the intake, with a state machine
+
 public class Intake {
 
     private DcMotorEx intakeMotor;
@@ -28,6 +30,7 @@ public class Intake {
         this.intakeMotor = (DcMotorEx)intakeMotor;
     }
 
+    //Call this once to get everything set up
     public void initialize() {
         currentState = state.stopped;
         lastState = state.stopped;
@@ -37,6 +40,7 @@ public class Intake {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+    //Call this in the opmode loop
     public void update(boolean trigger, boolean reverse) {
         double currentVelocity = (intakeMotor.getVelocity() / PPR * 60.0); //in RPM
         if (currentState == state.running) {

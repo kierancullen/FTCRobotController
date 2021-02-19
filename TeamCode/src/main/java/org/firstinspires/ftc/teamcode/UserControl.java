@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+//Current class for TeleOp
 @TeleOp(name="UserControl")
 public class UserControl extends BaseOpmode {
 
     TeleOpPositioner positioner;
 
-    final Point launchingTarget = new Point (213.16, 365.76);
+    final Point launchingTarget = new Point (213.16, 365.76); //Real coordinates of the front of the goal
     double LaunchRPM = 5000;
 
     public void init() {
@@ -17,8 +18,7 @@ public class UserControl extends BaseOpmode {
 
     public void start() {
         super.start();
-        localizer.setPosition(new Point(213.16,21.955),  Math.toRadians(90)); //whatever the start position is after auto, actually
-        //x was 304.8
+        localizer.setPosition(new Point(213.16,21.955),  Math.toRadians(90)); //this would be whatever the start position is after auto, actually
         positioner.initialize();
     }
 
@@ -26,6 +26,7 @@ public class UserControl extends BaseOpmode {
     boolean xLast;
     public void loop() {
 
+        //Currently just some code for tweaking the launcher power
         if (!xLast && gamepad1.x) toggleNavigation = !toggleNavigation;
         xLast = gamepad1.x;
         if (gamepad1.right_stick_button) LaunchRPM+= 10;
@@ -49,6 +50,8 @@ public class UserControl extends BaseOpmode {
         telemetry.addData("Localizer angle", Math.toDegrees(localizer.robotAngle)); */
 
     }
+
+    //Function to get the Launch RPM based on distance
 
     public double getLaunchRPM() {
         double distanceToTarget = follower.distanceTo(launchingTarget);

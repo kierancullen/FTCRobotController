@@ -36,6 +36,7 @@ public class Launcher {
         this.pushServo = pushServo;
     }
 
+    //Call this once to get everything set up
     public void initialize() {
         currentState = Launcher.state.load;
         lastState = Launcher.state.load;
@@ -43,7 +44,8 @@ public class Launcher {
 
         disksRemaining = 0;
     }
-    
+
+    //Call this in the opmode loop
     public void update(double launchRPM, boolean prepareLaunch, boolean goLaunch, boolean abort, boolean testLaunch) {
         flywheel.update();
 

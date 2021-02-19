@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
 
+//Really just an add-on to the localizer class that tracks the robot speed and estimates things like slip distance
+//This functionality could've been implemented in the localizer class probably
+
 public class SpeedTracker {
 
     private Localizer localizer;
@@ -25,14 +28,16 @@ public class SpeedTracker {
     public void update() {
         long currentTime = SystemClock.uptimeMillis();
 
+        //If we haven't actually moved on this iteration of the loop, just return
         if (Math.abs(localizer.deltaX) < 0.0001 && Math.abs(localizer.deltaY) < 0.0001 && Math.abs(localizer.deltaAngle) < 0.0001) return;
 
+        //Make sure we're not updating too fast
         if (currentTime - lastUpdateStartTime > timeBetweenUpdates) {
             double elapsedTimeSec = (double)(currentTime - lastUpdateStartTime) / 1000.0;
-            double speedY = localizer.deltaY / elapsedTimeSec;
-            double speedX = localizer.deltaX / elapsedTimeSec;
+            double speedY = localizer.deltaY / elapsedTimeSec; //Real speed in cm/s
+            double speedX = localizer.deltaX / elapsedTimeSec; //Real speed in cm/s
 
-            if (speedX < 500 && speedY < 500) {
+            if (speedX < 500 && speedY < 500) { //Sanity check on the speed to prevent weird spikes
                 currentSpeed.x = speedX;
                 currentSpeed.y = speedY;
             }
@@ -42,12 +47,15 @@ public class SpeedTracker {
         }
     }
 
+    //Calculates how far the robot would slip if we were to stop moving at the current instant
+    //I'm using Point as a distance vector here really
     public Point getCurrentSlipDistance() {
         double slipDistanceY = currentSpeed.y * ySlipDistance;
         double slipDistanceX = currentSpeed.x * xSlipDistance;
         return new Point (slipDistanceX, slipDistanceY);
     }
 
+    //Calcuates how far the robot would slip rotationally if we were to stop moving at the current instant
     public double getCurrentSlipAngle() {
         return currentAngularVelocity * turnSlipAmount;
     }

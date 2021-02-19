@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.MathHelper.wrapAngle;
 
+//Class that represents the whole odometry system and contains three odometer objects, one for each wheel
 public class Localizer {
 
     public Odometer left, right, center;
 
     public Point robotPosition;
     public double robotAngle;
+
     public double deltaX;
     public double deltaY;
     public double deltaAngle;
@@ -44,7 +46,7 @@ public class Localizer {
         deltaX = center.delta - xError;
 
 
-        if (Math.abs(deltaAngle) > 0) {
+        if (Math.abs(deltaAngle) > 0) { //These are the arc calculations that avoid just segmenting our motion
             double movementRadius = (right.delta + left.delta) / (2*deltaAngle);
             double strafeRadius = (deltaX / deltaAngle);
 
@@ -53,13 +55,12 @@ public class Localizer {
 
         }
 
-        double deltaResultant = Math.sqrt(deltaY*deltaY + deltaX*deltaX);
         robotPosition.x += (Math.cos(robotAngle) * deltaY) + (Math.sin(robotAngle) * deltaX);
         robotPosition.y += (Math.sin(robotAngle) * deltaY) - (Math.cos(robotAngle) * deltaX);
         robotAngle = absoluteAngle;
     }
 
-
+    //Used to just set the position, such as at the beginning of an opmode
     public void setPosition(Point robotPosition, double robotAngle) {
         this.robotPosition = robotPosition;
         this.robotAngle = robotAngle;

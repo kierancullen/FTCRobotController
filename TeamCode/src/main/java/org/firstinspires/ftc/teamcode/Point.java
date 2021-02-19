@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+//A Point class with doubles instead of ints
+
 public class Point {
     public double x;
     public double y;

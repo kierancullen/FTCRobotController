@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+//A class that represents the drivetrain
 
 public class Drivetrain {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
+    //Maximum powers
     final private double differentialMax = 1.0;
     final private double strafeMax = 1.0;
 
@@ -42,10 +44,12 @@ public class Drivetrain {
         turnVelocity = 0;
     }
 
+    //call this method in the Opmode loop
     public void update() {
         setPowers();
     }
 
+    //Take our velocities and set the motor powers accordingly
     private void setPowers() {
         double tl_power_raw = translateVelocity.y-turnVelocity+translateVelocity.x;
         double bl_power_raw = translateVelocity.y-turnVelocity- translateVelocity.x;
@@ -75,6 +79,8 @@ public class Drivetrain {
         frontRight.setPower(tr_power_raw);
     }
 
+    //Sets the drivetrain velocities based on the gamepad. Used in TeleOp
+    //Currently uses tank drive on the left and right joysticks, plus triggers for strafing
     public void setVelocityFromGamepad(Gamepad controller) {
         double horiz;
         double l;
@@ -89,6 +95,7 @@ public class Drivetrain {
         turnVelocity = (r - l) / 3;
     }
 
+    //Turns brake mode on or off
     public void setBrake(boolean brake) {
         if (brake) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

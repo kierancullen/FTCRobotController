@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+//A class that represents a single odometry wheel
 
 public class Odometer {
 
     private DcMotor encoder;
-    public boolean invert;
+    public boolean invert; //reverses direction
 
     public long lastResetValue;
     private long lastValue;
@@ -30,6 +31,7 @@ public class Odometer {
     }
 
     public void update() {
+        //Fetch our current value from the encoder
         if (invert) currentValue = (-encoder.getCurrentPosition());
         else currentValue = encoder.getCurrentPosition();
 
