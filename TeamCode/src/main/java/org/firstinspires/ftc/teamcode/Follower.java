@@ -16,7 +16,7 @@ public class Follower {
 
     public enum state {
         zooming,
-        slipping,
+        decelerating,
         adjusting;
 
         private static state[] states = values();
@@ -60,7 +60,7 @@ public class Follower {
             }
         }
 
-        if (movementYState == state.slipping) {
+        if (movementYState == state.decelerating) {
             powerY = 0;
             if (Math.abs(tracker.currentSpeed.y) < 3) {
                 movementYState = movementYState.next();
@@ -77,7 +77,7 @@ public class Follower {
             }
         }
 
-        if (movementXState == state.slipping) {
+        if (movementXState == state.decelerating) {
             powerX = 0;
             if (Math.abs(tracker.currentSpeed.y) < 3) {
                 movementXState = movementXState.next();
@@ -98,7 +98,7 @@ public class Follower {
             }
         }
 
-        if (turningState == state.slipping) {
+        if (turningState == state.decelerating) {
             if (Math.toDegrees(Math.abs(tracker.currentAngularVelocity)) < 60) {
                 turningState = turningState.next();
             }
@@ -183,6 +183,99 @@ public class Follower {
         drivetrain.translateVelocity.x *= turnErrorScale;
         drivetrain.translateVelocity.y *= turnErrorScale;
 
+    }
+
+    public void goToWaypoint(Waypoint target, boolean stable) { //new method with all the latest functionality
+
+        double currentSlipY = (tracker.getCurrentSlipDistance().y * Math.sin(localizer.robotAngle) +
+                tracker.getCurrentSlipDistance().x * Math.cos(localizer.robotAngle));
+        double currentSlipX = (tracker.getCurrentSlipDistance().y * Math.cos(localizer.robotAngle) +
+                tracker.getCurrentSlipDistance().x * Math.sin(localizer.robotAngle));
+
+        Point targetAdjusted = new Point (target.location.x - currentSlipX, target.location.y - currentSlipY);
+
+        double distanceToPoint = Math.sqrt(Math.pow(targetAdjusted.x-localizer.robotPosition.x, 2) + Math.pow(targetAdjusted.y-localizer.robotPosition.y, 2));
+
+        double angleToPoint = Math.atan2(targetAdjusted.y - localizer.robotPosition.y, targetAdjusted.x - localizer.robotPosition.x);
+        double deltaAngleToPoint = MathHelper.wrapAngle(angleToPoint-(localizer.robotAngle-Math.toRadians(90))); //check this
+
+        double relativeX = Math.cos(deltaAngleToPoint) * distanceToPoint;
+        double relativeY = Math.sin(deltaAngleToPoint) * distanceToPoint;
+
+        double relativeXAbs = Math.abs(relativeX);
+        double relativeYAbs = Math.abs(relativeY);
+
+        double powerX = (relativeX / (relativeYAbs + relativeXAbs));
+        double powerY = (relativeY / (relativeYAbs + relativeXAbs));
+
+        if (movementYState == state.zooming) {
+            powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
+            if(relativeYAbs < target.slowDownDistance && stable) {
+                movementYState = state.decelerating;
+            }
+        }
+
+        if (movementYState == state.decelerating) {
+            powerY *= relativeYAbs / target.slowDownDistance;
+            powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
+            if (Math.abs(tracker.currentSpeed.y) < 3) {
+                movementYState = movementYState.adjusting;
+            }
+        }
+
+        if (movementYState == state.adjusting) {
+            powerY *= relativeYAbs / target.slowDownDistance;
+            powerY = Range.clip(powerY, -target.goToSpeed, target.goToSpeed);
+            powerY *= Range.clip((relativeYAbs/6.0), 0, 1); //Check this
+        }
+
+        if (movementXState == state.zooming) {
+            powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
+            if(relativeXAbs < target.slowDownDistance && stable) {
+                movementXState = state.decelerating;
+            }
+        }
+
+        if (movementXState == state.decelerating) {
+            powerX *= relativeXAbs / target.slowDownDistance;
+            powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
+            if (Math.abs(tracker.currentSpeed.x) < 3) {
+                movementXState = movementYState.adjusting;
+            }
+        }
+
+        if (movementXState == state.adjusting) {
+            powerX *= relativeXAbs / target.slowDownDistance;
+            powerX = Range.clip(powerX, -target.goToSpeed, target.goToSpeed);
+            powerX *= Range.clip((relativeXAbs/6.0), 0, 1); //Check this
+        }
+
+        double absoluteHeading = target.driveAngle + Math.atan2(target.location.y - localizer.robotPosition.y, target.location.x - localizer.robotPosition.x);
+        double relativeHeading = MathHelper.wrapAngle(absoluteHeading-localizer.robotAngle);
+
+        double relativeHeadingAdjusted = MathHelper.wrapAngle(relativeHeading-tracker.getCurrentSlipAngle());
+
+        double staticTurnDistance = MathHelper.wrapAngle(target.staticAngle - localizer.robotAngle);
+
+        double powerTurn = 0;
+
+        if (turningState == state.zooming) {
+            powerTurn = (relativeHeadingAdjusted/target.slowDownAngle);
+            powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
+            if (relativeXAbs < target.slowDownDistance && relativeYAbs < target.slowDownDistance && stable) {
+                turningState = state.adjusting;
+            }
+        }
+
+        if (turningState == state.adjusting) {
+            powerTurn = (staticTurnDistance/target.slowDownAngle);
+            powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
+            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(2), 0, 1);
+
+        }
+        drivetrain.turnVelocity = powerTurn;
+        drivetrain.translateVelocity.x = powerX;
+        drivetrain.translateVelocity.y = powerY;
     }
 
     double xMin = 0.11;
