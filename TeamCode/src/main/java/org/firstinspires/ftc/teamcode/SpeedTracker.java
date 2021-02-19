@@ -8,8 +8,7 @@ public class SpeedTracker {
 
     private long lastUpdateStartTime = 0;
 
-    private double currentSpeedX = 0.0;
-    private double currentSpeedY = 0.0;
+    public Point currentSpeed;
 
     public double currentAngularVelocity = 0;
 
@@ -33,8 +32,8 @@ public class SpeedTracker {
             double speedX = localizer.deltaX / elapsedTimeSec;
 
             if (speedX < 500 && speedY < 500) {
-                currentSpeedX = speedX;
-                currentSpeedY = speedY;
+                currentSpeed.x = speedX;
+                currentSpeed.y = speedY;
             }
 
             currentAngularVelocity = MathHelper.wrapAngle(localizer.deltaAngle) / elapsedTimeSec;
@@ -43,8 +42,8 @@ public class SpeedTracker {
     }
 
     public Point getCurrentSlipDistance() {
-        double slipDistanceY = currentSpeedY * ySlipDistance;
-        double slipDistanceX = currentSpeedX * xSlipDistance;
+        double slipDistanceY = currentSpeed.y * ySlipDistance;
+        double slipDistanceX = currentSpeed.x * xSlipDistance;
         return new Point (slipDistanceX, slipDistanceY);
     }
 

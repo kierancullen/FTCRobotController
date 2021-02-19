@@ -13,6 +13,7 @@ public class BaseOpmode extends OpMode {
     Intake intake;
     Launcher launcher;
     SpeedTracker tracker;
+    Follower follower;
 
     final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI);
     final double odometryLeftRadius = 19.674; //(6 * 2.54) + (4.4); //4.473
@@ -39,6 +40,7 @@ public class BaseOpmode extends OpMode {
 
         localizer = new Localizer(left, right, center);
         tracker = new SpeedTracker(localizer);
+        follower = new Follower(localizer, drivetrain, tracker);
 
         DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         intake = new Intake(intakeMotor);
@@ -51,13 +53,16 @@ public class BaseOpmode extends OpMode {
         setServoExtendedRange(tiltServo, 500, 2500);
         setServoExtendedRange(pushServo, 500, 2500);
         launcher = new Launcher(launcherMotor, tiltServo, pushServo);
+
+
     }
 
 
     public void start() {
-        localizer.setPosition(new Point(0,0), 0); //Make sure we're at the origin
+        localizer.setPosition(new Point(0,0), 90); //Make sure we're at the origin
         intake.initialize();
         launcher.initialize();
+        follower.initialize();
     }
 
 
@@ -67,6 +72,8 @@ public class BaseOpmode extends OpMode {
         intake.update(gamepad1.right_bumper, gamepad1.left_bumper);
         launcher.update(launchRPM, gamepad1.dpad_up, gamepad1.y, gamepad1.a, gamepad1.b);
         telemetry.update();
+
+        follower.goToSimple(new Point(0, 10), 0, 0.5, 0.5, Math.toDegrees(60), 0, true);
     }
 
     public void setServoExtendedRange (Servo servo, int min, int max) {

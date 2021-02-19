@@ -13,8 +13,8 @@ public class Drivetrain {
     final private double differentialMax = 1.0;
     final private double strafeMax = 1.0;
 
-    private Point translateVelocity;
-    private double turnVelocity;
+    public Point translateVelocity;
+    public double turnVelocity;
 
     Gamepad controller;
 
