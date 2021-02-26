@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
@@ -49,6 +50,7 @@ public class BaseOpmode extends OpMode {
 
         //Create the intake
         DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "color");
         intake = new Intake(intakeMotor);
 
         //Create the launcher
