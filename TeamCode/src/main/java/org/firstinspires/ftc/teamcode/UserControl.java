@@ -34,6 +34,7 @@ public class UserControl extends BaseOpmode {
 
         telemetry.addData("Launch RPM:", LaunchRPM);
         telemetry.addData("Distance to target", follower.distanceTo(launchingTarget));
+        telemetry.addData("Rings:", intake.ringCount);
 
         super.loop();
         intake.update(gamepad1.right_bumper, gamepad1.left_bumper);

@@ -51,7 +51,7 @@ public class BaseOpmode extends OpMode {
         //Create the intake
         DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "color");
-        intake = new Intake(intakeMotor);
+        intake = new Intake(intakeMotor, distance);
 
         //Create the launcher
         DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "launcher");

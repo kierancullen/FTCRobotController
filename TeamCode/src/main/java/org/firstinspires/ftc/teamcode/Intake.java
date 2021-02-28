@@ -16,12 +16,12 @@ public class Intake {
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.95;
+    final double forwardPower = 0.5;
     final double reversePower = -0.95;
 
     public int ringCount;
     final double countThreshold = 7.0; //Distance the sensor must fall below in order to count a ring
-    final long pause = 500; //Time to make sure we don't detect the same ring twice
+    final long pause = 100; //Time to make sure we don't detect the same ring twice
     private long timeAtLastRing;
 
     enum state {
@@ -62,7 +62,7 @@ public class Intake {
             else if (trigger && (timeElapsedInState() > 500)) {
                 currentState = state.stopped;
             }
-
+            //Count up if the distance sensor sees a ring and it hasn't been too little time since it last triggered
             if (distance.getDistance(DistanceUnit.CM) < countThreshold && (System.currentTimeMillis() - timeAtLastRing > pause)) {
                 ringCount++;
                 timeAtLastRing = System.currentTimeMillis();
@@ -105,6 +105,5 @@ public class Intake {
     private long timeElapsedInState() {
         return System.currentTimeMillis() - timeAtStateStart;
     }
-
 
 }
