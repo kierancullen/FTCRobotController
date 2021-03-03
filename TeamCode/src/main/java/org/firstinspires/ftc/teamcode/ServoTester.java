@@ -22,6 +22,9 @@ public class ServoTester {
     }
 
     public void update(boolean nextServo, boolean previousServo, boolean up, boolean down) {
+        if (servoPowers[0] != servoPowers[1]) {
+            servoPowers[0] = servoPowers[1];
+        }
         for (int i = 0; i < servos.length; i++) {
             servos[i].setPosition(servoPowers[i]);
         }

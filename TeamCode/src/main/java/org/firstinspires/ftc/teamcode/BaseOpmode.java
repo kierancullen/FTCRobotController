@@ -51,7 +51,12 @@ public class BaseOpmode extends OpMode {
         //Create the intake
         DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "color");
-        intake = new Intake(intakeMotor, distance);
+        Servo gateLeft = hardwareMap.get(Servo.class, "leftGate");
+        Servo gateRight = hardwareMap.get(Servo.class, "rightGate");
+        setServoExtendedRange(gateLeft, 500, 2500);
+        setServoExtendedRange(gateRight, 500, 2500);
+        gateLeft.setDirection(Servo.Direction.REVERSE);
+        intake = new Intake(intakeMotor, distance, gateLeft, gateRight);
 
         //Create the launcher
         DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "launcher");
@@ -62,15 +67,16 @@ public class BaseOpmode extends OpMode {
         setServoExtendedRange(tiltServo, 500, 2500);
         setServoExtendedRange(pushServo, 500, 2500);
         launcher = new Launcher(launcherMotor, tiltServo, pushServo);
+
+        intake.initialize();
+        launcher.initialize();
+        follower.initialize();
+        drivetrain.setBrake(true);
     }
 
 
     public void start() {
         localizer.setPosition(new Point(0,0),  Math.toRadians(90)); //Make sure we're at the origin (TeleOp and Autonomous opmodes can change this if needed)
-        intake.initialize();
-        launcher.initialize();
-        follower.initialize();
-        drivetrain.setBrake(true);
     }
 
     public void loop() {
