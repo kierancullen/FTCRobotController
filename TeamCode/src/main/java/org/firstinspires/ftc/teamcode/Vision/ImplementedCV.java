@@ -1,40 +1,39 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="ImplementedCVWebcam", group="Autonomous")
+@Autonomous(name="ImplementedCV", group="Autonomous")
 
-public class ImplementedCVWebcam extends LinearOpMode {
+public class ImplementedCV extends LinearOpMode {
 
-    OpenCvCamera webcam;
-    CVLinearOpMode pipeline;
+    OpenCvInternalCamera phoneCam;
+   CVLinearOpMode pipeline;
 
     public void runOpMode(){
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new CVLinearOpMode();
-        webcam.setPipeline(pipeline);
+        phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
         // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
 

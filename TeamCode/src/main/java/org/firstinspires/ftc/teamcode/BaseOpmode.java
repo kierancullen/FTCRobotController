@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 public class BaseOpmode extends OpMode {
 
     Drivetrain drivetrain;
-    LocalizerMultipliers localizer;
+    Localizer localizer;
     Intake intake;
     Launcher launcher;
     SpeedTracker tracker;
@@ -40,11 +40,11 @@ public class BaseOpmode extends OpMode {
         drivetrain = new Drivetrain(tl, tr, bl, br);
 
         //Create the localizer and related classes
-        Odometer left = new Odometer(br, true, odometryTicksPerUnit, odometryLeftRadius, odometryLeftBias);
+        Odometer left = new Odometer(tr, true, odometryTicksPerUnit, odometryLeftRadius, odometryLeftBias);
         Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius, odometryCenterBias);
-        Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
+        Odometer right = new Odometer(br, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
 
-        localizer = new LocalizerMultipliers(left, right, center);
+        localizer = new Localizer(left, right, center);
         tracker = new SpeedTracker(localizer);
         follower = new Follower(localizer, drivetrain, tracker);
 
