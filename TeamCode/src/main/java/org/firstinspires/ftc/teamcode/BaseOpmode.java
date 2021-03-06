@@ -18,12 +18,7 @@ public class BaseOpmode extends OpMode {
     Launcher launcher;
     SpeedTracker tracker;
     Follower follower;
-
-    final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI); //I'm considering a unit to be 1 cm
-    final double odometryLeftRadius = 19.924;
-    final double odometryRightRadius = 19.924;
-    final double odometryCenterRadius = 12.45;
-
+    
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
     final double odometryLeftBias = 1.0;
