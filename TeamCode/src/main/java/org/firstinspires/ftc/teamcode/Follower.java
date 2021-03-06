@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class Follower {
 
-    LocalizerMultipliers localizer;
+    Localizer localizer;
     SpeedTracker tracker;
     Drivetrain drivetrain;
 
@@ -30,7 +30,7 @@ public class Follower {
     }
 
 
-    public Follower (LocalizerMultipliers localizer, Drivetrain drivetrain, SpeedTracker tracker) {
+    public Follower (Localizer localizer, Drivetrain drivetrain, SpeedTracker tracker) {
         this.localizer = localizer;
         this.drivetrain = drivetrain;
         this.tracker = tracker;

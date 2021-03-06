@@ -7,7 +7,7 @@ import android.os.SystemClock;
 
 public class SpeedTracker {
 
-    private LocalizerMultipliers localizer;
+    private Localizer localizer;
 
     private long lastUpdateStartTime = 0;
 
@@ -20,7 +20,7 @@ public class SpeedTracker {
     private static double xSlipDistance = 0.153;
     public static double turnSlipAmount = 0.09; //for 1 radian per second
 
-    public SpeedTracker(LocalizerMultipliers localizer) {
+    public SpeedTracker(Localizer localizer) {
         this.localizer = localizer;
         currentSpeed = new Point (0,0);
     }

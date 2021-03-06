@@ -40,9 +40,9 @@ public class BaseOpmode extends OpMode {
         drivetrain = new Drivetrain(tl, tr, bl, br);
 
         //Create the localizer and related classes
-        Odometer left = new Odometer(tr, true, odometryTicksPerUnit, odometryLeftRadius, odometryLeftBias);
-        Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius, odometryCenterBias);
-        Odometer right = new Odometer(br, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
+        Odometer left = new Odometer(tr, true, odometryLeftBias);
+        Odometer center = new Odometer(bl, true,  odometryCenterBias);
+        Odometer right = new Odometer(br, false,  odometryRightBias);
 
         localizer = new Localizer(left, right, center);
         tracker = new SpeedTracker(localizer);
