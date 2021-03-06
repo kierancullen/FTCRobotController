@@ -18,7 +18,7 @@ public class UserControl extends BaseOpmode {
 
     public void start() {
         super.start();
-        localizer.setPosition(new Point(213.16,21.955),  Math.toRadians(90)); //this would be whatever the start position is after auto, actually
+        localizer.setPosition(new Point(0,0),  Math.toRadians(90)); //this would be whatever the start position is after auto, actually
         positioner.initialize();
     }
 

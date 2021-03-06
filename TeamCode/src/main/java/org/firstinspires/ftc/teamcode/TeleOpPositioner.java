@@ -27,7 +27,7 @@ public class TeleOpPositioner {
         timeAtStateStart = System.currentTimeMillis();
     }
 
-    public void update (Drivetrain drivetrain, Localizer localizer, Follower follower, Gamepad controller, boolean toggleNavigation, Point target) {
+    public void update (Drivetrain drivetrain, LocalizerMultipliers localizer, Follower follower, Gamepad controller, boolean toggleNavigation, Point target) {
         if (currentState == state.starting) {
             follower.initialize(); //Starting a new move, so the follower states have to be reset
             drivetrain.setVelocityFromGamepad(controller); //We're not actually navigating anywhere yet, so keep allowing gamepad control

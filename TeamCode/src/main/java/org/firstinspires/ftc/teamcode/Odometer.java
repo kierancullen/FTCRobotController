@@ -15,6 +15,9 @@ public class Odometer {
     public double delta;
     public double totalDelta;
 
+    public double deltaRaw;
+    public double totalDeltaRaw;
+
     public double ticksPerUnit;
     public double radius;
     public double bias;
@@ -37,6 +40,8 @@ public class Odometer {
 
         delta = bias *((double)(currentValue-lastValue) / ticksPerUnit); //How much we moved, in real units
         totalDelta = bias *((double)(currentValue-lastResetValue) / ticksPerUnit); //How much we moved since the beginning, in real units
+        deltaRaw = bias * (currentValue-lastValue); //How much we moved, in encoder ticks
+        totalDeltaRaw = bias *(currentValue-lastResetValue); //How much we moved since the beginning, in encoder ticks
 
         lastValue = currentValue;
 

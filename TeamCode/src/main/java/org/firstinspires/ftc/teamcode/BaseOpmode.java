@@ -13,19 +13,19 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 public class BaseOpmode extends OpMode {
 
     Drivetrain drivetrain;
-    Localizer localizer;
+    LocalizerMultipliers localizer;
     Intake intake;
     Launcher launcher;
     SpeedTracker tracker;
     Follower follower;
 
     final double odometryTicksPerUnit = (360 * 4) / (5.8 * Math.PI); //I'm considering a unit to be 1 cm
-    final double odometryLeftRadius = 19.674; //(6 * 2.54) + (4.4); //4.473
-    final double odometryRightRadius = 19.674; //(6 * 2.54) + (4.4);
-    final double odometryCenterRadius = (6.75 * 2.54) - (4.445);
+    final double odometryLeftRadius = 19.924;
+    final double odometryRightRadius = 19.924;
+    final double odometryCenterRadius = 12.45;
 
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
-    final double odometryRightBias = 0.9970;
+    final double odometryRightBias = 1.0;
     final double odometryLeftBias = 1.0;
     final double odometryCenterBias = 1.0;
 
@@ -44,7 +44,7 @@ public class BaseOpmode extends OpMode {
         Odometer center = new Odometer(bl, true, odometryTicksPerUnit, odometryCenterRadius, odometryCenterBias);
         Odometer right = new Odometer(tr, false, odometryTicksPerUnit, odometryRightRadius, odometryRightBias);
 
-        localizer = new Localizer(left, right, center);
+        localizer = new LocalizerMultipliers(left, right, center);
         tracker = new SpeedTracker(localizer);
         follower = new Follower(localizer, drivetrain, tracker);
 
@@ -71,7 +71,7 @@ public class BaseOpmode extends OpMode {
         intake.initialize();
         launcher.initialize();
         follower.initialize();
-        drivetrain.setBrake(true);
+        drivetrain.setBrake(false);
     }
 
 
@@ -82,10 +82,12 @@ public class BaseOpmode extends OpMode {
     public void loop() {
         localizer.update();
         //Some debugging stuff
-        telemetry.addData("turn state:", follower.turningState);
         telemetry.addData("localizer x:", localizer.robotPosition.x);
         telemetry.addData("localizer y:", localizer.robotPosition.y);
         telemetry.addData("Localizer angle", Math.toDegrees(localizer.robotAngle));
+        telemetry.addData("Right wheel raw", localizer.right.totalDeltaRaw);
+        telemetry.addData("Left wheel raw", localizer.left.totalDeltaRaw);
+        telemetry.addData("Center wheel raw", localizer.center.totalDeltaRaw);
         drivetrain.update();
         telemetry.update();
     }
