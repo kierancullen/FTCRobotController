@@ -41,15 +41,6 @@ public class UserControl extends BaseOpmode {
         intake.update(gamepad1.right_bumper, gamepad1.left_bumper);
         launcher.update(LaunchRPM, gamepad1.dpad_up, gamepad1.y, gamepad1.a, gamepad1.b);
         positioner.update(drivetrain, localizer, follower, gamepad1, toggleNavigation, launchingTarget);
-        /*telemetry.addData("Left raw", localizer.left.currentValue);
-        telemetry.addData("Right raw", localizer.right.currentValue);
-        telemetry.addData("Center raw", localizer.center.currentValue);
-        telemetry.addData("Left odometer", localizer.left.totalDelta);
-        telemetry.addData("Right odometer", localizer.right.totalDelta);
-        telemetry.addData("Center odometer", localizer.center.totalDelta);
-        telemetry.addData("Localizer x:", localizer.robotPosition.x);
-        telemetry.addData("Localizer y:", localizer.robotPosition.y);
-        telemetry.addData("Localizer angle", Math.toDegrees(localizer.robotAngle)); */
 
     }
 

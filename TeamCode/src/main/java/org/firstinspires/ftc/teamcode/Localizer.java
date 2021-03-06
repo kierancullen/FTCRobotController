@@ -57,7 +57,7 @@ public class Localizer {
 
 
         if (Math.abs(deltaAngle) > 0) { //These are the arc calculations that avoid just segmenting our motion
-            double movementRadius = (right.delta + left.delta) / (2*deltaAngle);
+            double movementRadius = (rightDeltaScale + leftDeltaScale) / (2*deltaAngle);
             double strafeRadius = (deltaX / deltaAngle);
 
             deltaY = (movementRadius * Math.sin(deltaAngle)) - (strafeRadius * (1-Math.cos(deltaAngle)));

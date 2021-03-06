@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Legacy;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,22 +16,29 @@ public class ServoTest extends OpMode {
     ServoTester tester;
 
     public void init() {
-        this.gateLeft = hardwareMap.get(Servo.class, "leftGate");
-        this.gateRight = hardwareMap.get(Servo.class, "rightGate");
-        this.deflectorLeft = hardwareMap.get(Servo.class, "leftDefl");
-        this.deflectorRight = hardwareMap.get(Servo.class, "rightDefl");
+        this.gateLeft = hardwareMap.get(Servo.class, "grabLeft");
+        this.gateRight = hardwareMap.get(Servo.class, "grabRight");
+        this.deflectorLeft = hardwareMap.get(Servo.class, "wobbleTiltLeft");
+        this.deflectorRight = hardwareMap.get(Servo.class, "wobbleTiltRight");
         setServoExtendedRange(gateLeft, 500, 2500);
         setServoExtendedRange(gateRight, 500, 2500);
-        setServoExtendedRange(deflectorLeft, 500, 2500);
-        setServoExtendedRange(deflectorRight, 500, 2500);
-        gateLeft.setDirection(Servo.Direction.REVERSE);
-        deflectorRight.setDirection(Servo.Direction.REVERSE);
+        /*setServoExtendedRange(deflectorLeft, 500, 2500);
+        setServoExtendedRange(deflectorRight, 500, 2500);*/
 
         tester = new ServoTester(new Servo[] {gateLeft, gateRight, deflectorLeft, deflectorRight});
     }
 
+    boolean rightLast = false;
+    boolean advance = false;
     public void loop() {
-       tester.update(gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.dpad_up, gamepad1.dpad_down);
+        if (gamepad1.dpad_right && !rightLast) {
+            advance = true;
+        }
+        else {
+            advance = false;
+        }
+        rightLast = gamepad1.dpad_right;
+       tester.update(advance, gamepad1.dpad_left, gamepad1.dpad_up, gamepad1.dpad_down);
        telemetry.addData("Servo:", tester.currentServo);
        telemetry.addData("Position:", tester.currentPower);
 

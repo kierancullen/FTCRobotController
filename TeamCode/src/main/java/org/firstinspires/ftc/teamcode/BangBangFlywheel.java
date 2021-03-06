@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class BangBangFlywheel {
 
-    enum state {
+    public enum state {
         stopped,
         starting,
         running

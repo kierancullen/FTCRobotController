@@ -18,7 +18,7 @@ public class BaseOpmode extends OpMode {
     Launcher launcher;
     SpeedTracker tracker;
     Follower follower;
-    
+
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
     final double odometryLeftBias = 1.0;

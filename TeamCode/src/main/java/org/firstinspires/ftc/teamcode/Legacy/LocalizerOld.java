@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.MathHelper.wrapAngle;
 //Class that represents the whole odometry system and contains three odometer objects, one for each wheel
 public class LocalizerOld {
 
-    public Odometer left, right, center;
+    public OdometerOld left, right, center;
 
     public Point robotPosition;
     public double robotAngle;
@@ -20,7 +20,7 @@ public class LocalizerOld {
 
     private double lastResetAngle; //Using for absolute turn calculations
 
-    public LocalizerOld(Odometer left, Odometer right, Odometer center) {
+    public LocalizerOld(OdometerOld left, OdometerOld right, OdometerOld center) {
         this.left = left;
         this.right = right;
         this.center = center;
