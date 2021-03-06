@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Odometry;
+package org.firstinspires.ftc.teamcode.NoahOdometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import static org.firstinspires.ftc.teamcode.Odometry.OdometryVariables.horizontalOffset;
-import static org.firstinspires.ftc.teamcode.Odometry.OdometryVariables.trackwidth;
+import static org.firstinspires.ftc.teamcode.NoahOdometry.OdometryVariables.horizontalOffset;
+import static org.firstinspires.ftc.teamcode.NoahOdometry.OdometryVariables.trackwidth;
 
 public class OdometryCalculations {
 

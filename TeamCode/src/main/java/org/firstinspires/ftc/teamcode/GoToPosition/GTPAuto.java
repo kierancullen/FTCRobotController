@@ -1,22 +1,22 @@
-package org.firstinspires.ftc.teamcode.Odometry_Monish;
+package org.firstinspires.ftc.teamcode.GoToPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Odometry.OdometryCalculations;
-import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.NoahOdometry.OdometryCalculations;
+import org.firstinspires.ftc.teamcode.NoahOdometry.OdometryGlobalCoordinatePosition;
 
-import static org.firstinspires.ftc.teamcode.Odometry.OdometryCalculations.coordinatePositionUpdate;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.calculations.changeInError;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.calculations.d;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.calculations.dIsNotZero;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.calculations.dIsZero;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPCalculations.changeInError;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPCalculations.d;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPCalculations.dIsNotZero;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPCalculations.dIsZero;
+import static org.firstinspires.ftc.teamcode.NoahOdometry.OdometryCalculations.coordinatePositionUpdate;
 
 
 @Autonomous(name = "OdometryLinOpMode", group = "Autonomous")
-public class mainDriver extends LinearOpMode {
+public class GTPAuto extends LinearOpMode {
     private static DcMotor leftFrontWheel, leftBackWheel, rightFrontWheel, rightBackWheel;
 
     //Odometry encoder wheels
@@ -46,9 +46,9 @@ public class mainDriver extends LinearOpMode {
 
     public static double lastPoint = 0;
 
-    private double[]testX = {0,25,50};
-    private double[]testY = {0,25,0};
-    private double[]testHeading = {bestAngle,bestAngle,bestAngle};
+    private double[]testX = {0,25,25,0};
+    private double[]testY = {0,25,25,50};
+    private double[]testHeading = {bestAngle,bestAngle,bestAngle,0};
 
     private double[] xCoordinates1 = {15,8,0,-10};
     private double [] yCoordinates1 = {36,50,53,56};
@@ -65,7 +65,7 @@ public class mainDriver extends LinearOpMode {
     public void runOpMode() {
 
 
-        while (!opModeIsActive() && !isStopRequested()) {
+
             // goToPosition = new MotorPowerMecanum();
             // pid = new PIDCalulations();
 
@@ -109,7 +109,8 @@ public class mainDriver extends LinearOpMode {
             rightBackWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
             coordinatePositionUpdate(verticalLeftPosition, verticalRightPosition, horizontalPosition);
-        }
+
+            waitForStart();
 
         if (opModeIsActive()) {
             /*heading = globalPositionUpdate.robotOrientationRadians;
@@ -134,7 +135,7 @@ public class mainDriver extends LinearOpMode {
             go(xCoordinates4i, yCoordinates4i, headings4i);*/
 
             go(testX,testY,testHeading);
-            sleep(10000);
+
         }
 
     }
@@ -169,7 +170,7 @@ public class mainDriver extends LinearOpMode {
             //globalYPosEncoderTicks = odometryCalculations.coordinatePositionUpdate()[1];
 
             // calculate powers and set them to the respective motors
-            powers = calculations.goToPositionCalculations(x, y, heading);
+            powers = GTPCalculations.goToPositionCalculations(x, y, heading);
             setPower(powers[0]*powers[5], powers[1]*powers[5], powers[2]*powers[5], powers[3]*powers[5]);
             telemetry.addData("final point", powers[6]);
             telemetry.addData("coordinateNumber", coordinateNumber);
@@ -182,7 +183,7 @@ public class mainDriver extends LinearOpMode {
             telemetry.addData("d", d);
             telemetry.addData("changeInError", changeInError);
             telemetry.update();
-        } while (powers[6] < 15 || powers[4] > 1.2 || d > 0.001);
+        } while (opModeIsActive() & powers[6] < 15 || powers[4] > 1.2 || d > 0.001);
 
         // stop
         setPower(0, 0, 0, 0);
