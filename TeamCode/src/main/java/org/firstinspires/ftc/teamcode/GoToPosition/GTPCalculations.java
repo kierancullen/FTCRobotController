@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.Odometry_Monish;
+package org.firstinspires.ftc.teamcode.GoToPosition;
 
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.mainDriver.coordinateNumber;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.mainDriver.globalHeading;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.mainDriver.globalXPosEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.mainDriver.globalYPosEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Odometry_Monish.mainDriver.lastPoint;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPAuto.coordinateNumber;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPAuto.globalHeading;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPAuto.globalXPosEncoderTicks;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPAuto.globalYPosEncoderTicks;
+import static org.firstinspires.ftc.teamcode.GoToPosition.GTPAuto.lastPoint;
 
-public class calculations {
+public class GTPCalculations {
     public static double Theta, c, linearDistance, rotationalDistance;
     public static double outputX;
     public static double outputY, headingForTurning;
@@ -72,7 +72,7 @@ public class calculations {
 
         if(desiredHeading[coordinateNumber] != 1000) {
             distanceToTurn = desiredHeading[coordinateNumber] - Math.toDegrees(globalHeading);
-        }  else if (c > 3 && desiredHeading[coordinateNumber] == 1000){
+        }  else if (c > 6 && desiredHeading[coordinateNumber] == 1000){
             distanceToTurn = Math.toDegrees(Math.atan2(xPowerRatio,yPowerRatio)) - Math.toDegrees(globalHeading);
         } else {
             distanceToTurn = 0;
