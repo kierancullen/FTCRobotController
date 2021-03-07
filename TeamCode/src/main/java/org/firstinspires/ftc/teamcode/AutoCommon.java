@@ -24,11 +24,11 @@ public class AutoCommon extends BaseOpmode {
         park
     }
 
-    final double normalRPM = 4500;
-    final double powershotRPM = 3500;
+    final double normalRPM = 4200;
+    final double powershotRPM = 3400;
 
     Point robotStartPosition = new Point (121.92,21.955);
-    Point noahOrigin = new Point (121.92, 21.955); //The point that I think all of Noah's points are relative to
+    Point noahOrigin = new Point (121.92, 21.955); //The point that all of Noah's points are relative to
 
     Waypoint driveout1 = new Waypoint(transform(10, 100, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 100, Math.toRadians(40));
@@ -54,6 +54,7 @@ public class AutoCommon extends BaseOpmode {
         lastState = state.starting;
         timeAtStateStart = System.currentTimeMillis();
 
+        //Do CV things here
     }
 
     public void start() {
@@ -106,7 +107,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause1) {
             follower.goToWaypoint(driveout2, true);
-            if (timeElapsedInState() > 750) {
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2) && timeElapsedInState() > 500) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -132,7 +133,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause2) {
             follower.goToWaypoint(strafe1, true);
-            if (timeElapsedInState() > 750) {
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.1) && timeElapsedInState() > 500) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -157,7 +158,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause3) {
             follower.goToWaypoint(strafe2, true);
-            if (timeElapsedInState() > 750) {
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.1) && timeElapsedInState() > 500) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -228,7 +229,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.launchextras) {
             follower.goToWaypoint(aim, true);
-            if (launcher.disksRemaining == 0) {
+            if (launcher.disksRemaining == 1) {
                 currentState = state.ringposition2;
                 prepareLaunch = false;
                 goLaunch = false;
@@ -290,7 +291,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.launchextras2) {
             follower.goToWaypoint(aim, true);
-            if (launcher.disksRemaining == 0) {
+            if (launcher.disksRemaining == 1) {
                 currentState = state.drivetodropzone;
                 prepareLaunch = false;
                 goLaunch = false;
