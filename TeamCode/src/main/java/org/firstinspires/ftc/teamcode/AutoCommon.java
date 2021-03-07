@@ -2,8 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.Vision.CVLinearOpMode;
+import org.firstinspires.ftc.teamcode.Vision.RingsCV;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+
 @Autonomous(name = "AutoCommon")
 public class AutoCommon extends BaseOpmode {
+
+    OpenCvCamera webcam;
+    CVLinearOpMode pipeline;
+
 
 
     enum state {
@@ -45,6 +56,7 @@ public class AutoCommon extends BaseOpmode {
 
     public state currentState;
     public state lastState;
+    public RingsCV.SkystoneDeterminationPipeline.RingPosition ringCondition;
     private long timeAtStateStart;
 
     public void init() {
@@ -54,7 +66,32 @@ public class AutoCommon extends BaseOpmode {
         lastState = state.starting;
         timeAtStateStart = System.currentTimeMillis();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        pipeline = new CVLinearOpMode();
+        webcam.setPipeline(pipeline);
+
+        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+        // out when the RC activity is in portrait. We do our actual image processing assuming
+        // landscape orientation, though.
+        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+        });
+
+        ringCondition = pipeline.position;
+
+        telemetry.addData("ringCondition", ringCondition);
+        telemetry.update();
+
     }
+
 
     public void start() {
         super.start();
