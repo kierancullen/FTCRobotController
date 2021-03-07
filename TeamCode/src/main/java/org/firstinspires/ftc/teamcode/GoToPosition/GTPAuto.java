@@ -46,21 +46,54 @@ public class GTPAuto extends LinearOpMode {
 
     public static double lastPoint = 0;
 
-    private double[]testX = {0,25,25,0};
-    private double[]testY = {0,25,25,50};
-    private double[]testHeading = {bestAngle,bestAngle,bestAngle,0};
+    /*Here is where I put the coordinates for the points. I will group by which coordinates they are (the 1st set, second set,
+    etc.) Following the name, there will be both a number and possibly a letter. The number refers to which set of coordinates
+    they are. The letter refers to for which autonomous case, as identified by the CV (A, B, or C), each will be used for.*/
 
-    private double[] xCoordinates1 = {15,8,0,-10};
-    private double [] yCoordinates1 = {36,50,53,56};
-    private double [] headings1 = {bestAngle,bestAngle,bestAngle,0};
+    //GOING TO 1ST POWERSHOT TARGET
+    private double[] xCoordinates1 = {0, 3, 3};
+    private double[] yCoordinates1 = {0, 36, 36};
+    private double[] headings1 = {bestAngle, bestAngle, 0};
 
-    private double [] xCoordinates2 = {-12};
-    private double [] yCoordinates2 = {61};
-    private double [] headings2 = {180};
+    //GOING TO 2ND POWERSHOT TARGET
+    private double[] xCoordinate2 = {9.5};
+    private double[] yCoordinate2 = {36};
+    private double[] heading2 = {0};
 
-    private double [] xCoordinates3 = {-12,-12,-12,-12};
-    private double [] yCoordinates3 = {48, 36, 61,61};
-    private double [] headings3 = {180,180,180,0};
+    //GOING TO 3RD POWERSHOT TARGET
+    private double[] xCoordinate3 = {16};
+    private double[] yCoordinate3 = {36};
+    private double[] heading3 = {0};
+
+    //GOING TO COLLECT RINGS
+    private double[] xCoordinates4 = {0,-10};
+    private double[] yCoordinates4 = {37,37};
+    private double[] headings4 = {bestAngle,-90};
+
+    //SHOOTING RINGS
+    private double[] xCoordinate5 = {-9};
+    private double[] yCoordinate5 = {40};
+    private double[] heading5 = {0};
+
+    //GOING TO DEPOSIT 1ST WOBBLE GOAL
+    private double[] xCoordinate6 = {3};
+    private double[] yCoordinate6 = {85};
+    private double[] heading6 = {bestAngle};
+
+    //GOING TO PICK UP 2ND WOBBLE GOAL
+    private double[] xCoordinates7 = {-20,-28};
+    private double[] yCoordinates7 = {75,30};
+    private double[] headings7 = {-90,-90};
+
+    //GOING TO DEPOSIT 2ND WOBBLE GOAL
+    private double[] xCoordinate8 = {-3,0};
+    private double[] yCoordinate8 = {30, 85};
+    private double[] heading8 = {0,0};
+
+    //PARKING ON MIDLINE
+    private double[] xCoordinate9 = {-10};
+    private double[] yCoordinate9 = {58};
+    private double[] heading9 = {0};
 
     public void runOpMode() {
 
@@ -68,7 +101,6 @@ public class GTPAuto extends LinearOpMode {
 
             // goToPosition = new MotorPowerMecanum();
             // pid = new PIDCalulations();
-
 
 
             leftFrontWheel = hardwareMap.dcMotor.get("left front");
@@ -125,16 +157,33 @@ public class GTPAuto extends LinearOpMode {
 
 
 
+            go(xCoordinates1,yCoordinates1,headings1);
+            sleep(1000);
+            //SHOOT 1ST POWERSHOT TARGET
+            go(xCoordinate2,yCoordinate2,heading2);
+            sleep(1000);
+            //SHOOT 2ND POWERSHOT TARGET
+            go(xCoordinate3,yCoordinate3,heading3);
+            sleep(1000);
+            //SHOOT 3RD POWERSHOT TARGET
+            //TURN ON INTAKE
+            go(xCoordinates4,yCoordinates4,headings4);
+            //TURN OFF INTAKE
+            go(xCoordinate5,yCoordinate5,heading5);
+            sleep(2000);
+            //SHOOT RINGS
+            go(xCoordinate6,yCoordinate6,heading6);
+            sleep(1500);
+            //LET GO OF WOBBLE GOAL
+            go(xCoordinates7,yCoordinates7,headings7);
+            sleep(2000);
+            //GRAB WOBBLE GOAL
+            go(xCoordinate8,yCoordinate8,heading8);
+            sleep(1500);
+            //LET GO OF WOBBLE GOAL
+            go(xCoordinate9,yCoordinate9,heading9);
 
-            /*grabFoundation();
-            sleep(800);
-            go(xCoordinates3i, yCoordinates3i, headings3i);
-            releaseFoundation();
-            sleep(200);
-            intakeOn();
-            go(xCoordinates4i, yCoordinates4i, headings4i);*/
-
-            go(testX,testY,testHeading);
+            //go(testX,testY,testHeading);
 
         }
 
