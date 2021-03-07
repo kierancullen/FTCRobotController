@@ -76,10 +76,11 @@ public class BaseOpmode extends OpMode {
 
     public void loop() {
         localizer.update();
+        tracker.update();
         //Some debugging stuff
         telemetry.addData("localizer x:", localizer.robotPosition.x);
         telemetry.addData("localizer y:", localizer.robotPosition.y);
-        telemetry.addData("Localizer angle", Math.toDegrees(localizer.robotAngle));
+        telemetry.addData("localizer angle", Math.toDegrees(localizer.robotAngle));
         telemetry.addData("Right wheel raw", localizer.right.totalDeltaRaw);
         telemetry.addData("Left wheel raw", localizer.left.totalDeltaRaw);
         telemetry.addData("Center wheel raw", localizer.center.totalDeltaRaw);

@@ -9,7 +9,7 @@ public class Launcher {
     private static double tiltServoDown = 0;
     private static double pushServoIn = 0.27;
     private static double pushServoOut = 0.215;
-    private static long strokeTime = 80; // In one direction (in/out time assumed same)
+    public static long strokeTime = 80; // In one direction (in/out time assumed same)
 
     private BangBangFlywheel flywheel;
 
@@ -46,7 +46,7 @@ public class Launcher {
     }
 
     //Call this in the opmode loop
-    public void update(double launchRPM, boolean prepareLaunch, boolean goLaunch, boolean abort, boolean testLaunch) {
+    public void update(double launchRPM, boolean prepareLaunch, boolean goLaunch, boolean abort, boolean singleLaunch) {
         flywheel.update();
 
         if (currentState == state.load) {
@@ -68,7 +68,7 @@ public class Launcher {
             if (goLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
                 currentState = state.launchPush;
             }
-            else if (testLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
+            else if (singleLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
                 currentState = state.launchPush;
                 disksRemaining = 1;
             }
@@ -98,7 +98,7 @@ public class Launcher {
                 currentState = state.launchPush;
             }
             else if (timeElapsedInState() > strokeTime && disksRemaining == 0) {
-                currentState = state.load;
+                currentState = state.launchReady;
             }
             else if (abort) {
                 currentState = state.load;

@@ -44,10 +44,16 @@ public class ServoTest extends OpMode {
 
     }
 
+    public void stop() {
+        gateLeft.getController().pwmDisable();
+        deflectorLeft.getController().pwmDisable();
+    }
+
     public void setServoExtendedRange (Servo servo, int min, int max) {
         ServoControllerEx controller = (ServoControllerEx) servo.getController();
         int servoPort = servo.getPortNumber();
         PwmControl.PwmRange range = new PwmControl.PwmRange(min, max);
         controller.setServoPwmRange(servoPort, range);
     }
+
 }

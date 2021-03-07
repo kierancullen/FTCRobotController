@@ -112,5 +112,11 @@ public class Drivetrain {
         }
     }
 
+    public void allVelocitiesZero() {
+        turnVelocity = 0;
+        translateVelocity.x = 0;
+        translateVelocity.y = 0;
+    }
+
 
 }

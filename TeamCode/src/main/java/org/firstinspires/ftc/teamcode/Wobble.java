@@ -112,7 +112,7 @@ public class Wobble {
             grabRight.setPosition(grabClosePos);
             tiltLeft.setPosition(matchStartPos);
             tiltRight.setPosition(matchStartPos);
-            //Getting out of this state happens only in autonomous, so it can just be done by changing currentState
+            //Getting out of this state happens only in autonomous, so it can just be done by changing currentState manually
         }
 
         if (currentState != lastState) {

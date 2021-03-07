@@ -15,6 +15,8 @@ public class Follower {
     public state movementYState;
     public state turningState;
 
+    public pathState overallState;
+
     private static final double smallAdjustSpeed = 0.135;
 
     //Mini state machine for motion profiling
@@ -27,6 +29,13 @@ public class Follower {
         public state next() {
             return states[(this.ordinal() + 1) % states.length];
         }
+    }
+
+    //Mini state machine for determining whether we have arrived at a point or not
+
+    public enum pathState {
+        driving,
+        passed
     }
 
 
@@ -42,9 +51,15 @@ public class Follower {
         movementXState = state.zooming;
         movementYState = state.zooming;
         turningState = state.zooming;
+        overallState = pathState.driving;
     }
 
     //Latest method with all the new functionality
+
+    double lastDistanceToPoint;
+    double lastDistanceChange;
+
+
     public void goToWaypoint(Waypoint target, boolean stable) {
 
         //Determine how the robot would slip if we cut the powers, based on our current speed
@@ -140,7 +155,7 @@ public class Follower {
 
         }
 
-        if(relativeXAbs == 0 && relativeYAbs == 0) { //Fixes a case where we divide by 0 if we're extactly on top of the taet point
+        if(relativeXAbs == 0 && relativeYAbs == 0) { //Fixes a case where we divide by 0 if we're extactly on top of the that point
             powerX = 0;
             powerY = 0;
         }
@@ -149,14 +164,35 @@ public class Follower {
         drivetrain.turnVelocity = powerTurn;
         drivetrain.translateVelocity.x = powerX;
         drivetrain.translateVelocity.y = powerY;
+
+        double distanceChange = distanceToPoint - lastDistanceToPoint;
+        //If we were moving towards the point last time and are now moving away from it, and are also reasonably close, consider ourselves arrived (for non-stable moves)
+        //OR
+        //If all the x movement, y movement, and turn states are all in the adjusting state, consider ourselves arrived (for stable moves)
+        if (!stable && (lastDistanceChange < 0 && distanceChange > 0) && distanceToPoint < 5) {
+            lastDistanceToPoint = distanceToPoint;
+            lastDistanceChange = distanceChange;
+            overallState = pathState.passed;
+        }
+        else if (stable && (movementXState == state.adjusting && movementYState == state.adjusting && turningState == state.adjusting)) {
+            lastDistanceToPoint = distanceToPoint;
+            lastDistanceChange = distanceChange;
+            overallState = pathState.passed;
+        }
+        else {
+            lastDistanceToPoint = distanceToPoint;
+            lastDistanceChange = distanceChange;
+            overallState = pathState.driving;
+        }
     }
 
     //These are theoretically the minimum motor powers that produce any movement in each direction
+    //I'm actually using twice these in the code because they seemed too small in reality
     double xMin = 0.11;
     double yMin = 0.091;
     double turnMin = 0.1;
 
-    //If min is the minimum power that will produce movement, this method returns either value or min, whiever is higher (disregarding sign).
+    //If min is the minimum power that will produce movement, this method returns either value or min, whichever is higher (disregarding sign).
     public double minPower(double value, double min) {
         if (value >= 0 && value <= min) {
             return min;
@@ -178,3 +214,7 @@ public class Follower {
     }
 
 }
+
+
+
+
