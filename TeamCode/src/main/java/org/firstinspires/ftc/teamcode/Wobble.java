@@ -16,13 +16,13 @@ public class Wobble {
     private Servo tiltLeft;
     private Servo tiltRight;
 
-    final double stowedPos = 0;
-    final double matchStartPos = 0;
-    final double floatPos = 0;
-    final double downPos = 0;
+    final double stowedPos = 0.2;
+    final double matchStartPos = 0.29;
+    final double floatPos = 0.45;
+    final double downPos = 0.85;
 
-    final double grabClosePos = 0;
-    final double grabOpenPos = 0;
+    final double grabClosePos = 0.45;
+    final double grabOpenPos = 1.0;
 
     private boolean grabbingNow;
     private boolean lastToggleGrab;
