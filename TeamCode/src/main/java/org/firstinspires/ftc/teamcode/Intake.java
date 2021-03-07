@@ -20,7 +20,7 @@ public class Intake {
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.5;
+    final double forwardPower = 0.8;
     final double reversePower = -0.95;
 
     final double gateStowPos = 0.175;

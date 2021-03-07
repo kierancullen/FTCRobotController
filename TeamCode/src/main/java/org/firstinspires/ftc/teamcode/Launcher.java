@@ -7,9 +7,9 @@ public class Launcher {
 
     private static double tiltServoUp = 0.12;
     private static double tiltServoDown = 0;
-    private static double pushServoIn = 0.27;
+    private static double pushServoIn = 0.29;
     private static double pushServoOut = 0.215;
-    public static long strokeTime = 80; // In one direction (in/out time assumed same)
+    public static long strokeTime = 200; // In one direction (in/out time assumed same)
 
     private BangBangFlywheel flywheel;
 
@@ -20,7 +20,7 @@ public class Launcher {
     public state lastState;
     private long timeAtStateStart;
 
-    private int disksRemaining;
+    public int disksRemaining;
 
     enum state {
         load,
@@ -65,7 +65,7 @@ public class Launcher {
             pushServo.setPosition(pushServoOut);
             flywheel.setTargetRPM(launchRPM);
             flywheel.start();
-            if (goLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
+            if (goLaunch && flywheel.currentState == BangBangFlywheel.state.running && Math.abs(flywheel.getCurrentRPM() - launchRPM)  < 100) {
                 currentState = state.launchPush;
             }
             else if (singleLaunch && flywheel.currentState == BangBangFlywheel.state.running) {
@@ -94,7 +94,7 @@ public class Launcher {
             pushServo.setPosition(pushServoOut);
             flywheel.setTargetRPM(launchRPM);
             flywheel.start();
-            if (timeElapsedInState() > strokeTime && disksRemaining != 0) {
+            if (timeElapsedInState() > strokeTime && disksRemaining != 0 && Math.abs(flywheel.getCurrentRPM() - launchRPM)  < 100) {
                 currentState = state.launchPush;
             }
             else if (timeElapsedInState() > strokeTime && disksRemaining == 0) {

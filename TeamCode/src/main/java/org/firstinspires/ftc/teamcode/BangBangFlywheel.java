@@ -61,7 +61,7 @@ public class BangBangFlywheel {
         }
     }
 
-    private double getCurrentRPM() {
+    public double getCurrentRPM() {
         return Math.abs(this.flywheelMotor.getVelocity()) / this.PPR * 60.0;
     }
 

@@ -104,7 +104,7 @@ public class Follower {
 
         if (movementYState == state.adjusting) {
             powerY = Range.clip(powerY, -yMin * 2, yMin * 2); //Use very small power to make fine adjustments
-            powerY *= Range.clip((relativeYAbs/2.0), 0, 1);
+            powerY *= Range.clip((relativeYAbs/3.0), 0, 1);
         }
 
         //All of these are duplicates of the ones for the Y direction
@@ -126,7 +126,7 @@ public class Follower {
 
         if (movementXState == state.adjusting) {
             powerX = Range.clip(powerX, -xMin * 2, xMin * 2);
-            powerX *= Range.clip((relativeXAbs/2.0), 0, 1);
+            powerX *= Range.clip((relativeXAbs/3.0), 0, 1);
         }
 
         //Heading calculations:
@@ -155,7 +155,7 @@ public class Follower {
 
         }
 
-        if(relativeXAbs == 0 && relativeYAbs == 0) { //Fixes a case where we divide by 0 if we're extactly on top of the that point
+        if(relativeXAbs == 0 && relativeYAbs == 0) { //Fixes a case where we divide by 0 if we're exactly on top of the point
             powerX = 0;
             powerY = 0;
         }
@@ -167,14 +167,14 @@ public class Follower {
 
         double distanceChange = distanceToPoint - lastDistanceToPoint;
         //If we were moving towards the point last time and are now moving away from it, and are also reasonably close, consider ourselves arrived (for non-stable moves)
-        //OR
-        //If all the x movement, y movement, and turn states are all in the adjusting state, consider ourselves arrived (for stable moves)
-        if (!stable && (lastDistanceChange < 0 && distanceChange > 0) && distanceToPoint < 5) {
+        if (!stable && (lastDistanceChange < 0 && distanceChange > 0) && distanceToPoint < 10) {
             lastDistanceToPoint = distanceToPoint;
             lastDistanceChange = distanceChange;
             overallState = pathState.passed;
         }
-        else if (stable && (movementXState == state.adjusting && movementYState == state.adjusting && turningState == state.adjusting)) {
+        //If all the x movement, y movement, and turn states are all in the adjusting state, and we are also reasonably close to both the point and the desired angle, consider ourselves arrived (for stable moves)
+        else if (stable && (movementXState == state.adjusting && movementYState == state.adjusting && turningState == state.adjusting)
+                && distanceToPoint < 5 && Math.abs(staticTurnDistance) < Math.toRadians(1)) {
             lastDistanceToPoint = distanceToPoint;
             lastDistanceChange = distanceChange;
             overallState = pathState.passed;
