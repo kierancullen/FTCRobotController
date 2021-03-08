@@ -128,7 +128,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause1) {
             follower.goToWaypoint(driveout2, true);
-            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2)
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.15)
                     && (follower.distanceTo(driveout2.location) < 0.5)) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
@@ -155,7 +155,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause2) {
             follower.goToWaypoint(strafe1, true);
-            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2)
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.15)
                     && (follower.distanceTo(strafe1.location) < 0.5)) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
@@ -181,7 +181,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.pause3) {
             follower.goToWaypoint(strafe2, true);
-            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2)
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.15)
                     && (follower.distanceTo(strafe2.location) < 0.5)) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
