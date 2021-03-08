@@ -54,7 +54,7 @@ public class AutoCommon extends BaseOpmode {
             0.9, 0.7, 45, Math.toRadians(40));
     Waypoint dropzone2 = new Waypoint(transform(-40.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.9, 0.7, 45, Math.toRadians(40));
-    Waypoint goalgrabpoint = new Waypoint(transform(-33, 51.95, noahOrigin), Math.toRadians(90), Math.toRadians(180),
+    Waypoint goalgrabpoint = new Waypoint(transform(-32, 51.95, noahOrigin), Math.toRadians(90), Math.toRadians(180),
             0.9, 0.7, 70, Math.toRadians(40));
     Waypoint park = new Waypoint(transform(0, 182.88, noahOrigin), Math.toRadians(90), Math.toRadians(180),
             0.9, 0.7, 70, Math.toRadians(40));
@@ -344,7 +344,7 @@ public class AutoCommon extends BaseOpmode {
 
         else if (currentState == state.drivetodropzone) {
             follower.goToWaypoint(dropzone1, false);
-            if (follower.distanceTo(dropzone1.location) < 30) {
+            if (follower.distanceTo(dropzone1.location) < 25) {
                 wobble.grabbingNow=false; //The servo takes time to open, so start a little early
             }
             if (follower.overallState == Follower.pathState.passed) {
@@ -387,7 +387,7 @@ public class AutoCommon extends BaseOpmode {
         else if (currentState == state.drivetodropzone2) {
             follower.goToWaypoint(dropzone2, false);
             wobble.currentState = Wobble.state.floatingAuto;
-            if (follower.distanceTo(dropzone2.location) < 30) {
+            if (follower.distanceTo(dropzone2.location) < 25) {
                 wobble.grabbingNow=false; //The servo takes time to open, so start a little early
             }
             if (follower.overallState == Follower.pathState.passed) {

@@ -167,7 +167,7 @@ public class Follower {
 
         double distanceChange = distanceToPoint - lastDistanceToPoint;
         //If we were moving towards the point last time and are now moving away from it, and are also reasonably close, consider ourselves arrived (for non-stable moves)
-        if (!stable && (lastDistanceChange < 0 && distanceChange > 0) && distanceToPoint < 10) {
+        if (!stable && (lastDistanceChange < 0 && distanceChange > 0) && distanceToPoint < 15) {
             lastDistanceToPoint = distanceToPoint;
             lastDistanceChange = distanceChange;
             overallState = pathState.passed;
