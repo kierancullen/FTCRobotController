@@ -67,6 +67,9 @@ public class AutoCommon extends BaseOpmode {
         timeAtStateStart = System.currentTimeMillis();
 
 
+    }
+
+    public void init_loop(){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new CVLinearOpMode();
@@ -90,12 +93,7 @@ public class AutoCommon extends BaseOpmode {
 
         telemetry.addData("ringCondition", ringCondition);
         telemetry.update();
-
-
-        //Do CV things here
-
     }
-
 
     public void start() {
         super.start();
