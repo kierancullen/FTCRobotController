@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //A class that represents the wobble grabber, with a state machine
 
@@ -19,18 +14,21 @@ public class Wobble {
     final double stowedPos = 0.2;
     final double matchStartPos = 0.29;
     final double floatPos = 0.45;
+    final double floatPosAuto = 0.75;
     final double downPos = 0.85;
 
-    final double grabClosePos = 0.45;
+    final double grabClosePos = 0.35;
     final double grabOpenPos = 1.0;
 
-    private boolean grabbingNow;
+    public boolean grabbingNow;
     private boolean lastToggleGrab;
 
     enum state {
-        matchStart,
+        matchStartOpen,
+        matchStartClosed,
         stowed,
         floating,
+        floatingAuto,
         down,
     }
 
@@ -54,7 +52,7 @@ public class Wobble {
     }
 
     //Call this in the opmode loop
-    public void update(boolean prepare, boolean toggleGrab, boolean autoDrop, boolean wallDrop) {
+    public void update(boolean prepare, boolean toggleGrab) {
         if (toggleGrab == true && lastToggleGrab == false && currentState == (state.down)) {
             grabbingNow = !grabbingNow;
         }
@@ -106,8 +104,20 @@ public class Wobble {
                 grabbingNow = false;
             }
         }
+        else if (currentState == state.floatingAuto) {
+            tiltLeft.setPosition(floatPosAuto);
+            tiltRight.setPosition(floatPosAuto);
+        }
 
-        else if (currentState == state.matchStart) {
+        else if (currentState == state.matchStartOpen) {
+            grabLeft.setPosition(grabOpenPos);
+            grabRight.setPosition(grabOpenPos);
+            tiltLeft.setPosition(matchStartPos);
+            tiltRight.setPosition(matchStartPos);
+            //Getting out of this state happens only in autonomous, so it can just be done by changing currentState manually
+        }
+
+        else if (currentState == state.matchStartClosed) {
             grabLeft.setPosition(grabClosePos);
             grabRight.setPosition(grabClosePos);
             tiltLeft.setPosition(matchStartPos);

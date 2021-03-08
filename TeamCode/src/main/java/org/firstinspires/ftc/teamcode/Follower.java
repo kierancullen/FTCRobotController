@@ -104,7 +104,7 @@ public class Follower {
 
         if (movementYState == state.adjusting) {
             powerY = Range.clip(powerY, -yMin * 2, yMin * 2); //Use very small power to make fine adjustments
-            powerY *= Range.clip((relativeYAbs/1.0), 0, 1);
+            powerY *= Range.clip((relativeYAbs/1.5), 0, 1);
         }
 
         //All of these are duplicates of the ones for the Y direction
@@ -126,7 +126,7 @@ public class Follower {
 
         if (movementXState == state.adjusting) {
             powerX = Range.clip(powerX, -xMin * 2, xMin * 2);
-            powerX *= Range.clip((relativeXAbs/1.0), 0, 1);
+            powerX *= Range.clip((relativeXAbs/1.5), 0, 1);
         }
 
         //Heading calculations:
@@ -142,7 +142,7 @@ public class Follower {
         if (turningState == state.zooming) { //In this state, we're turning so that we drive towards the target point at driveAngle
             powerTurn = (relativeHeadingAdjusted/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
-            if (relativeXAbs < target.slowDownDistance && relativeYAbs < target.slowDownDistance && stable) { //Once we get close, we go to the next state
+            if (relativeXAbs < target.slowDownDistance && relativeYAbs < target.slowDownDistance) { //Once we get close, we go to the next state
                 turningState = state.adjusting;
             }
         }
@@ -151,7 +151,7 @@ public class Follower {
             powerTurn = (staticTurnDistance/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
             powerTurn = minPower(powerTurn, turnMin);
-            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(0.5), 0, 1);
+            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(1.0), 0, 1);
 
         }
 

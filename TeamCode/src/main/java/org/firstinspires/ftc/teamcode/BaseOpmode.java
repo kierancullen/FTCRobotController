@@ -18,6 +18,7 @@ public class BaseOpmode extends OpMode {
     Launcher launcher;
     SpeedTracker tracker;
     Follower follower;
+    Wobble wobble;
 
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
@@ -63,8 +64,16 @@ public class BaseOpmode extends OpMode {
         setServoExtendedRange(pushServo, 500, 2500);
         launcher = new Launcher(launcherMotor, tiltServo, pushServo);
 
+        //Create the wobble goal grabber
+        Servo grabLeft = hardwareMap.get(Servo.class, "grabLeft");
+        Servo grabRight = hardwareMap.get(Servo.class, "grabRight");
+        Servo wobbleTiltLeft = hardwareMap.get(Servo.class, "wobbleTiltLeft");
+        Servo wobbleTiltRight = hardwareMap.get(Servo.class, "wobbleTiltRight");
+        wobble = new Wobble (grabLeft, grabRight, wobbleTiltLeft, wobbleTiltRight);
+
         intake.initialize();
         launcher.initialize();
+        wobble.initialize();
         follower.initialize();
         drivetrain.setBrake(false);
     }

@@ -32,6 +32,8 @@ public class Intake {
     final double countThresholdUpper = 15.0;
     boolean crossedDown;
 
+    public boolean gate;
+
 
     enum state {
         running,
@@ -63,13 +65,20 @@ public class Intake {
 
         gateLeft.setPosition(gateStowPos);
         gateRight.setPosition(gateStowPos);
+        gate = true;
     }
 
     //Call this in the opmode loop
     public void update(boolean trigger, boolean reverse) {
         ringCountReal = ringCount/2;
-        gateLeft.setPosition(gateRaisedPos);
-        gateRight.setPosition(gateRaisedPos);
+        if (gate) {
+            gateLeft.setPosition(gateRaisedPos);
+            gateRight.setPosition(gateRaisedPos);
+        }
+        else {
+            gateLeft.setPosition(gateStowPos);
+            gateRight.setPosition(gateStowPos);
+        }
 
         //Count up if the distance sensor sees a ring and it hasn't been too little time since it last triggered
         if (distance.getDistance(DistanceUnit.CM) < countThresholdLower) {

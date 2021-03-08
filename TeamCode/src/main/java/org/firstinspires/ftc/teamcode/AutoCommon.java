@@ -7,8 +7,6 @@ import org.firstinspires.ftc.teamcode.Vision.CVLinearOpMode;
 import org.firstinspires.ftc.teamcode.Vision.RingsCV;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name = "AutoCommon")
 public class AutoCommon extends BaseOpmode {
@@ -29,7 +27,7 @@ public class AutoCommon extends BaseOpmode {
         ringposition2, ringcollect2, ringcollectreverse2,
         aimprepare2, aim2, launchextras2,
         drivetodropzone, dropwobble,
-        driveback, grabwobble,
+        driveback, pause4, grabwobble,
         drivetodropzone2, dropwobble2,
         park
     }
@@ -42,7 +40,7 @@ public class AutoCommon extends BaseOpmode {
 
     Waypoint driveout1 = new Waypoint(transform(10, 100, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 100, Math.toRadians(40));
-    Waypoint driveout2 = new Waypoint(transform(9.62, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+    Waypoint driveout2 = new Waypoint(transform(11.62, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 20, Math.toRadians(40));
     Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
@@ -52,6 +50,14 @@ public class AutoCommon extends BaseOpmode {
             0.75, 0.75, 50, Math.toRadians(40));
     Waypoint aim = new Waypoint(transform(-30.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.35, 30, Math.toRadians(40));
+    Waypoint dropzone1 = new Waypoint(transform(-55.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+            0.9, 0.7, 45, Math.toRadians(40));
+    Waypoint dropzone2 = new Waypoint(transform(-40.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+            0.9, 0.7, 45, Math.toRadians(40));
+    Waypoint goalgrabpoint = new Waypoint(transform(-33, 51.95, noahOrigin), Math.toRadians(90), Math.toRadians(180),
+            0.9, 0.7, 70, Math.toRadians(40));
+    Waypoint park = new Waypoint(transform(0, 182.88, noahOrigin), Math.toRadians(90), Math.toRadians(180),
+            0.9, 0.7, 70, Math.toRadians(40));
 
     public state currentState;
     public state lastState;
@@ -64,18 +70,22 @@ public class AutoCommon extends BaseOpmode {
         currentState = state.starting;
         lastState = state.starting;
         timeAtStateStart = System.currentTimeMillis();
+        wobble.currentState = Wobble.state.matchStartOpen;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new CVLinearOpMode();
         webcam.setPipeline(pipeline);
+
     }
 
     public void init_loop(){
         ringCondition = pipeline.position;
-
         telemetry.addData("ringCondition", ringCondition);
         telemetry.update();
+
+        if (gamepad1.a) wobble.currentState = Wobble.state.matchStartClosed;
+        wobble.update(false, false); //We need to do this so that we can load the wobble goal and have it grab it during init
     }
 
     public void start() {
@@ -90,13 +100,16 @@ public class AutoCommon extends BaseOpmode {
     boolean abortLaunch = false;
     boolean singleLaunch = false;
 
+    boolean wobblePrepare = false;
+    boolean wobbleGrab = false;
+
     double launchRPM;
 
     public void loop() {
         telemetry.addData("Intake ring count:", intake.ringCount);
         telemetry.addData("Follower x:", follower.movementXState);
         telemetry.addData("Follower y:", follower.movementYState);
-        telemetry.addData("Follower trun:", follower.turningState);
+        telemetry.addData("Follower turn:", follower.turningState);
         telemetry.addData("Auto state:", currentState);
         telemetry.addData("Path state:", follower.overallState);
         telemetry.addData("Launcher state", launcher.currentState);
@@ -104,6 +117,7 @@ public class AutoCommon extends BaseOpmode {
 
         if (currentState == state.starting) {
             launchRPM = powershotRPM;
+            wobble.grabbingNow = true;
             prepareLaunch = true;
             if (timeElapsedInState() > 500) {
                 follower.initialize();
@@ -320,7 +334,74 @@ public class AutoCommon extends BaseOpmode {
                 prepareLaunch = false;
                 goLaunch = false;
                 abortLaunch = true;
+
+                follower.initialize();
+                drivetrain.allVelocitiesZero();
+                wobble.currentState = Wobble.state.floatingAuto;
+                intake.gate = false;
             }
+        }
+
+        else if (currentState == state.drivetodropzone) {
+            follower.goToWaypoint(dropzone1, false);
+            if (follower.distanceTo(dropzone1.location) < 30) {
+                wobble.grabbingNow=false; //The servo takes time to open, so start a little early
+            }
+            if (follower.overallState == Follower.pathState.passed) {
+                wobble.grabbingNow=false;
+                wobble.currentState = Wobble.state.stowed;
+                currentState = state.driveback;
+
+                follower.initialize();
+                drivetrain.allVelocitiesZero();
+            }
+
+        }
+
+        else if (currentState == state.driveback) {
+            follower.goToWaypoint(goalgrabpoint, true);
+            if ((localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.15)
+                    && (follower.distanceTo(goalgrabpoint.location) < 0.5)) {
+                wobble.currentState = Wobble.state.down;
+                currentState = state.pause4;
+            }
+        }
+
+        else if (currentState == state.pause4) {
+            follower.goToWaypoint(goalgrabpoint, true);
+            //Waiting for arm to drop
+            if (timeElapsedInState() > 750) {
+                currentState = state.grabwobble;
+                follower.initialize();
+                drivetrain.allVelocitiesZero();
+            }
+        }
+
+        else if (currentState == state.grabwobble) {
+            wobble.grabbingNow = true;
+            if (timeElapsedInState() > 750) {
+                currentState = state.drivetodropzone2;
+            }
+        }
+
+        else if (currentState == state.drivetodropzone2) {
+            follower.goToWaypoint(dropzone2, false);
+            wobble.currentState = Wobble.state.floatingAuto;
+            if (follower.distanceTo(dropzone2.location) < 30) {
+                wobble.grabbingNow=false; //The servo takes time to open, so start a little early
+            }
+            if (follower.overallState == Follower.pathState.passed) {
+                wobble.grabbingNow=false;
+                wobble.currentState = Wobble.state.stowed;
+                currentState = state.park;
+
+                follower.initialize();
+                drivetrain.allVelocitiesZero();
+            }
+        }
+
+        else if (currentState == state.park) {
+            follower.goToWaypoint(park, true);
         }
 
 
@@ -337,6 +418,7 @@ public class AutoCommon extends BaseOpmode {
     private void updateStateMachines() {
         launcher.update(launchRPM, prepareLaunch, goLaunch, abortLaunch, singleLaunch);
         intake.update(false, false); //No variables for these because we're just switching states manually
+        wobble.update(wobblePrepare, wobbleGrab);
     }
 
     private long timeElapsedInState() {
