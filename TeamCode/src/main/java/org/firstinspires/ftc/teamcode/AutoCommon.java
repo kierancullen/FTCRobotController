@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Vision.CVLinearOpMode;
 import org.firstinspires.ftc.teamcode.Vision.RingsCV;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -14,8 +15,6 @@ public class AutoCommon extends BaseOpmode {
 
     OpenCvCamera webcam;
     CVLinearOpMode pipeline;
-
-
 
     enum state {
         starting,
@@ -67,28 +66,12 @@ public class AutoCommon extends BaseOpmode {
         timeAtStateStart = System.currentTimeMillis();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         pipeline = new CVLinearOpMode();
         webcam.setPipeline(pipeline);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
-
     }
 
     public void init_loop(){
-
         ringCondition = pipeline.position;
 
         telemetry.addData("ringCondition", ringCondition);
