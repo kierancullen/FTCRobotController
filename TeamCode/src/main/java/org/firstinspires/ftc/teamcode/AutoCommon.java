@@ -66,10 +66,6 @@ public class AutoCommon extends BaseOpmode {
         lastState = state.starting;
         timeAtStateStart = System.currentTimeMillis();
 
-
-    }
-
-    public void init_loop(){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new CVLinearOpMode();
@@ -88,6 +84,10 @@ public class AutoCommon extends BaseOpmode {
                 webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
+
+    }
+
+    public void init_loop(){
 
         ringCondition = pipeline.position;
 
