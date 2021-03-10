@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.Vision.RingsCV;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import static org.firstinspires.ftc.teamcode.Vision.RingsCV.SkystoneDeterminationPipeline.RingPosition.*;
+
 @Autonomous(name = "AutoCommon")
 public class AutoCommon extends BaseOpmode {
 
@@ -50,10 +52,8 @@ public class AutoCommon extends BaseOpmode {
             0.75, 0.75, 50, Math.toRadians(40));
     Waypoint aim = new Waypoint(transform(-30.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.35, 30, Math.toRadians(40));
-    Waypoint dropzone1 = new Waypoint(transform(-55.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
-            0.9, 0.7, 45, Math.toRadians(40));
-    Waypoint dropzone2 = new Waypoint(transform(-40.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
-            0.9, 0.7, 45, Math.toRadians(40));
+    Waypoint dropzone1;
+    Waypoint dropzone2;
     Waypoint goalgrabpoint = new Waypoint(transform(-32, 51.95, noahOrigin), Math.toRadians(90), Math.toRadians(180),
             0.9, 0.7, 70, Math.toRadians(40));
     Waypoint park = new Waypoint(transform(0, 182.88, noahOrigin), Math.toRadians(90), Math.toRadians(180),
@@ -77,6 +77,7 @@ public class AutoCommon extends BaseOpmode {
         pipeline = new CVLinearOpMode();
         webcam.setPipeline(pipeline);
 
+
     }
 
     public void init_loop(){
@@ -92,6 +93,28 @@ public class AutoCommon extends BaseOpmode {
         super.start();
         follower.initialize();
         localizer.setPosition(robotStartPosition, Math.toRadians(90));
+
+        //Determine where we're going to drop the wobble goal
+        if (ringCondition == FOUR) {
+            dropzone1 = new Waypoint(transform(-55.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+            dropzone2 = new Waypoint(transform(-40.96, 290.325, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+        }
+
+        else if (ringCondition == ONE) {
+            dropzone1 = new Waypoint(transform(5, 229.365, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+            dropzone2 = new Waypoint(transform(20, 229.365, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+        }
+
+        else {
+            dropzone1 = new Waypoint(transform(-55.96, 168.405, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+            dropzone2 = new Waypoint(transform(-40.96, 168.405, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+                    0.9, 0.7, 45, Math.toRadians(40));
+        }
     }
 
 
@@ -217,9 +240,17 @@ public class AutoCommon extends BaseOpmode {
             follower.goToWaypoint(ringposition, true);
             launchRPM = normalRPM;
             if (follower.overallState == Follower.pathState.passed) {
-                currentState = state.ringcollect;
-                intake.currentState = Intake.state.running;
-                intake.ringCountReal = 0;
+                if (ringCondition == FOUR || ringCondition == ONE) {
+                    currentState = state.ringcollect;
+                    intake.currentState = Intake.state.running;
+                    intake.ringCountReal = 0;
+                }
+                else {
+                    currentState = state.drivetodropzone;
+                    follower.initialize();
+                    drivetrain.allVelocitiesZero();
+                    intake.gate = false;
+                }
             }
         }
 
@@ -268,12 +299,23 @@ public class AutoCommon extends BaseOpmode {
         else if (currentState == state.launchextras) {
             follower.goToWaypoint(aim, true);
             if (launcher.disksRemaining == 1) {
-                currentState = state.ringposition2;
-                prepareLaunch = false;
-                goLaunch = false;
-                abortLaunch = true;
-                drivetrain.allVelocitiesZero();
-                follower.initialize();
+                if (ringCondition == RingsCV.SkystoneDeterminationPipeline.RingPosition.FOUR) {
+                    currentState = state.ringposition2;
+                    prepareLaunch = false;
+                    goLaunch = false;
+                    abortLaunch = true;
+                    drivetrain.allVelocitiesZero();
+                    follower.initialize();
+                }
+                else if (ringCondition == ONE) {
+                    currentState = state.drivetodropzone;
+                    prepareLaunch = false;
+                    goLaunch = false;
+                    abortLaunch = true;
+                    drivetrain.allVelocitiesZero();
+                    follower.initialize();
+                }
+
             }
         }
 

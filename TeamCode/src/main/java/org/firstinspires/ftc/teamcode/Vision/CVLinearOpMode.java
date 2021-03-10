@@ -28,13 +28,13 @@ public class CVLinearOpMode extends OpenCvPipeline {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(20,110);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(20,5);
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+        final int FOUR_RING_THRESHOLD = 133;
+        final int ONE_RING_THRESHOLD = 120;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
