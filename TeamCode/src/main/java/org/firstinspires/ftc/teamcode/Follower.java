@@ -10,14 +10,16 @@ public class Follower {
     Localizer localizer;
     SpeedTracker tracker;
     Drivetrain drivetrain;
+    MiniPID pid;
+    final double p = 2;
+    final double i = 0.25;
+    final double d = 0;
 
     public state movementXState;
     public state movementYState;
     public state turningState;
 
     public pathState overallState;
-
-    private static final double smallAdjustSpeed = 0.135;
 
     //Mini state machine for motion profiling
     public enum state {
@@ -43,6 +45,8 @@ public class Follower {
         this.localizer = localizer;
         this.drivetrain = drivetrain;
         this.tracker = tracker;
+        this.pid = new MiniPID(p, i, d);
+        pid.setOutputLimits(-1, 1);
     }
 
 
@@ -52,6 +56,7 @@ public class Follower {
         movementYState = state.zooming;
         turningState = state.zooming;
         overallState = pathState.driving;
+        pid.reset();
     }
 
     //Latest method with all the new functionality
@@ -104,7 +109,7 @@ public class Follower {
 
         if (movementYState == state.adjusting) {
             powerY = Range.clip(powerY, -yMin * 2, yMin * 2); //Use very small power to make fine adjustments
-            powerY *= Range.clip((relativeYAbs/1.5), 0, 1);
+            powerY *= Range.clip((relativeYAbs/2), 0, 1);
         }
 
         //All of these are duplicates of the ones for the Y direction
@@ -126,7 +131,7 @@ public class Follower {
 
         if (movementXState == state.adjusting) {
             powerX = Range.clip(powerX, -xMin * 2, xMin * 2);
-            powerX *= Range.clip((relativeXAbs/1.5), 0, 1);
+            powerX *= Range.clip((relativeXAbs/2), 0, 1);
         }
 
         //Heading calculations:
@@ -152,6 +157,7 @@ public class Follower {
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
             powerTurn = minPower(powerTurn, turnMin);
             powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(0.5), 0, 1);
+
 
         }
 
@@ -184,6 +190,12 @@ public class Follower {
             lastDistanceChange = distanceChange;
             overallState = pathState.driving;
         }
+    }
+
+    public double pidTurn(double targetAngle) {
+        double turnVelocity = pid.getOutput(localizer.robotAngle, targetAngle);
+        drivetrain.turnVelocity = turnVelocity;
+        return  turnVelocity;
     }
 
     //These are theoretically the minimum motor powers that produce any movement in each direction
