@@ -35,18 +35,18 @@ public class AutoCommon extends BaseOpmode {
     }
 
     final double normalRPM = 4200;
-    final double powershotRPM = 3400;
+    final double powershotRPM = 3300;
 
     Point robotStartPosition = new Point (121.92,21.955);
     Point noahOrigin = new Point (121.92, 21.955); //The point that all of Noah's points are relative to
 
     Waypoint driveout1 = new Waypoint(transform(10, 100, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 100, Math.toRadians(40));
-    Waypoint driveout2 = new Waypoint(transform(11.62, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+    Waypoint driveout2 = new Waypoint(transform(11.62, 152.4, noahOrigin), Math.toRadians(95), Math.toRadians(0),
             0.75, 0.5, 20, Math.toRadians(40));
-    Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
+    Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(95), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
-    Waypoint strafe2 = new Waypoint(transform(50.34, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
+    Waypoint strafe2 = new Waypoint(transform(48.34, 152.4, noahOrigin), Math.toRadians(95), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
     Waypoint ringposition = new Waypoint(transform(10, 103, noahOrigin), Math.toRadians(180), Math.toRadians(-90),
             0.75, 0.75, 50, Math.toRadians(40));
@@ -129,7 +129,7 @@ public class AutoCommon extends BaseOpmode {
     double launchRPM;
 
     public void loop() {
-        telemetry.addData("Intake ring count:", intake.ringCount);
+        telemetry.addData("Current angular velocity", Math.toDegrees(tracker.currentAngularVelocity));
         telemetry.addData("Follower x:", follower.movementXState);
         telemetry.addData("Follower y:", follower.movementYState);
         telemetry.addData("Follower turn:", follower.turningState);
@@ -142,6 +142,7 @@ public class AutoCommon extends BaseOpmode {
             launchRPM = powershotRPM;
             wobble.grabbingNow = true;
             prepareLaunch = true;
+            //follower.pidSpeed(Math.toRadians(5));
             if (timeElapsedInState() > 500) {
                 follower.initialize();
                 currentState = state.driveout1;
@@ -164,10 +165,10 @@ public class AutoCommon extends BaseOpmode {
         }
 
         else if (currentState == state.pause1) {
-            follower.goToWaypoint(driveout2, true);
-            telemetry.addData("PID power:", follower.pidTurn(driveout2.staticAngle));
-            if (Math.abs(localizer.robotAngle - (driveout2.staticAngle)) < Math.toRadians(0.2)
-                    && (follower.distanceTo(driveout2.location) < 1) && timeElapsedInState() > 750) {
+            //follower.goToWaypoint(driveout2, true);
+            drivetrain.turnVelocity = 0.07;
+            if (localizer.robotAngle > Math.toRadians(90)) drivetrain.turnVelocity *= -1;
+            if (Math.abs(localizer.robotAngle - (Math.toRadians(90))) < Math.toRadians(0.2) && timeElapsedInState() > 750) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -192,10 +193,10 @@ public class AutoCommon extends BaseOpmode {
         }
 
         else if (currentState == state.pause2) {
-            follower.goToWaypoint(strafe1, true);
-            telemetry.addData("PID power:", follower.pidTurn(strafe1.staticAngle));
-            if (Math.abs(localizer.robotAngle - (strafe1.staticAngle)) < Math.toRadians(0.2)
-                    && (follower.distanceTo(strafe1.location) < 1) && timeElapsedInState() > 750) {
+            //follower.goToWaypoint(strafe1, true);
+            drivetrain.turnVelocity = 0.07;
+            if (localizer.robotAngle > Math.toRadians(90)) drivetrain.turnVelocity *= -1;
+            if (Math.abs(localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2) && timeElapsedInState() > 750) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -219,10 +220,10 @@ public class AutoCommon extends BaseOpmode {
         }
 
         else if (currentState == state.pause3) {
-            follower.goToWaypoint(strafe2, true);
-            telemetry.addData("PID power:", follower.pidTurn(strafe2.staticAngle));
-            if (Math.abs(localizer.robotAngle - (strafe2.staticAngle)) < Math.toRadians(0.2)
-                    && (follower.distanceTo(strafe2.location) < 1) && timeElapsedInState() > 750) {
+            //follower.goToWaypoint(strafe2, true);
+            drivetrain.turnVelocity = 0.07;
+            if (localizer.robotAngle > Math.toRadians(90)) drivetrain.turnVelocity *= -1;
+            if (Math.abs(localizer.robotAngle - Math.toRadians(90)) < Math.toRadians(0.2) && timeElapsedInState() > 750) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
