@@ -11,10 +11,9 @@ public class Follower {
     SpeedTracker tracker;
     Drivetrain drivetrain;
     MiniPID pid;
-    final double p = 5;
-    final double i = 1;
+    final double p = 2;
+    final double i = 0.25;
     final double d = 0;
-    final double f = 0.1;
 
     public state movementXState;
     public state movementYState;
@@ -46,8 +45,8 @@ public class Follower {
         this.localizer = localizer;
         this.drivetrain = drivetrain;
         this.tracker = tracker;
-        this.pid = new MiniPID(p, i, d, f);
-        pid.setOutputLimits(0, 1);
+        this.pid = new MiniPID(p, i, d);
+        pid.setOutputLimits(-1, 1);
     }
 
 
@@ -181,7 +180,7 @@ public class Follower {
         }
         //If all the x movement, y movement, and turn states are all in the adjusting state, and we are also reasonably close to both the point and the desired angle, consider ourselves arrived (for stable moves)
         else if (stable && (movementXState == state.adjusting && movementYState == state.adjusting && turningState == state.adjusting)
-                && distanceToPoint < 1 && Math.abs(staticTurnDistance) < Math.toRadians(1)) {
+                && distanceToPoint < 5 && Math.abs(staticTurnDistance) < Math.toRadians(1)) {
             lastDistanceToPoint = distanceToPoint;
             lastDistanceChange = distanceChange;
             overallState = pathState.passed;
@@ -195,12 +194,6 @@ public class Follower {
 
     public double pidTurn(double targetAngle) {
         double turnVelocity = pid.getOutput(localizer.robotAngle, targetAngle);
-        drivetrain.turnVelocity = turnVelocity;
-        return  turnVelocity;
-    }
-
-    public double pidSpeed(double targetSpeed) {
-        double turnVelocity = pid.getOutput(Math.abs(tracker.currentAngularVelocity), targetSpeed);
         drivetrain.turnVelocity = turnVelocity;
         return  turnVelocity;
     }
