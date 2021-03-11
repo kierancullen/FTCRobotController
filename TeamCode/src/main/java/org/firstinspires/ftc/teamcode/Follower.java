@@ -11,9 +11,9 @@ public class Follower {
     SpeedTracker tracker;
     Drivetrain drivetrain;
     MiniPID pid;
-    final double p = 2;
+    final double p = 3;
     final double i = 0.25;
-    final double d = 0;
+    final double d = 0.05;
 
     public state movementXState;
     public state movementYState;
@@ -180,7 +180,7 @@ public class Follower {
         }
         //If all the x movement, y movement, and turn states are all in the adjusting state, and we are also reasonably close to both the point and the desired angle, consider ourselves arrived (for stable moves)
         else if (stable && (movementXState == state.adjusting && movementYState == state.adjusting && turningState == state.adjusting)
-                && distanceToPoint < 5 && Math.abs(staticTurnDistance) < Math.toRadians(1)) {
+                && distanceToPoint < 1 && Math.abs(staticTurnDistance) < Math.toRadians(1)) {
             lastDistanceToPoint = distanceToPoint;
             lastDistanceChange = distanceChange;
             overallState = pathState.passed;
