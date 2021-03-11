@@ -12,7 +12,7 @@ public class Follower {
     Drivetrain drivetrain;
     MiniPID pid;
     final double p = 3;
-    final double i = 0.25;
+    final double i = 0.35;
     final double d = 0.05;
 
     public state movementXState;

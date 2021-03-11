@@ -49,9 +49,9 @@ public class AutoCommon extends BaseOpmode {
     Waypoint strafe2 = new Waypoint(transform(48.34, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
     Waypoint ringposition = new Waypoint(transform(10, 103, noahOrigin), Math.toRadians(180), Math.toRadians(-90),
-            0.75, 0.75, 50, Math.toRadians(40));
+            1.0, 1.0, 50, Math.toRadians(40));
     Waypoint aim = new Waypoint(transform(-30.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
-            0.75, 0.35, 30, Math.toRadians(40));
+            1.0, 0.35, 30, Math.toRadians(40));
     Waypoint dropzone1;
     Waypoint dropzone2;
     Waypoint goalgrabpoint = new Waypoint(transform(-31, 48.95, noahOrigin), Math.toRadians(90), Math.toRadians(180),
@@ -174,7 +174,7 @@ public class AutoCommon extends BaseOpmode {
             follower.goToWaypoint(driveout2, true);
             follower.pidTurn(driveout2.staticAngle);
             if (Math.abs(localizer.robotAngle - (driveout2.staticAngle)) < Math.toRadians(0.2)
-                    && timeElapsedInState() > 750) {
+                    && timeElapsedInState() > 200) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -203,7 +203,7 @@ public class AutoCommon extends BaseOpmode {
             follower.goToWaypoint(strafe1, true);
             follower.pidTurn(strafe1.staticAngle);
             if (Math.abs(localizer.robotAngle - (strafe1.staticAngle)) < Math.toRadians(0.2)
-                    && timeElapsedInState() > 750) {
+                    && timeElapsedInState() > 200) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;
@@ -231,7 +231,7 @@ public class AutoCommon extends BaseOpmode {
             follower.goToWaypoint(strafe2, true);
             follower.pidTurn(strafe2.staticAngle);
             if (Math.abs(localizer.robotAngle - (strafe2.staticAngle)) < Math.toRadians(0.2)
-                    && timeElapsedInState() > 750) {
+                    && timeElapsedInState() > 200) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 singleLaunch = true;

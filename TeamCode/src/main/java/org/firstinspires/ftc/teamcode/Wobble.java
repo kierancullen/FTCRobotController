@@ -14,7 +14,7 @@ public class Wobble {
     final double stowedPos = 0.2;
     final double matchStartPos = 0.29;
     final double floatPos = 0.45;
-    final double floatPosAuto = 0.75;
+    final double floatPosAuto = 0.7;
     final double downPos = 0.85;
 
     final double grabClosePos = 0.35;
