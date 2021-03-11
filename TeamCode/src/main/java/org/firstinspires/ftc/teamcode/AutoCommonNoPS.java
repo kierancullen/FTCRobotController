@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Vision.CVLinearOpMode;
 import org.firstinspires.ftc.teamcode.Vision.RingsCV;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -10,8 +11,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import static org.firstinspires.ftc.teamcode.Vision.RingsCV.SkystoneDeterminationPipeline.RingPosition.*;
 
-@Autonomous(name = "AutoCommon")
-public class AutoCommon extends BaseOpmode {
+@Autonomous(name = "AutoCommonNoPS")
+public class AutoCommonNoPS extends BaseOpmode {
 
     OpenCvCamera webcam;
     CVLinearOpMode pipeline;
@@ -19,9 +20,7 @@ public class AutoCommon extends BaseOpmode {
     enum state {
         starting,
         driveout1, driveout2,
-        pause1, powershot1,
-        strafe1, pause2, powershot2,
-        strafe2, pause3, powershot3,
+        pause1, prelaunch,
         ringposition,
         ringcollect,
         ringcollectreverse,
@@ -34,7 +33,7 @@ public class AutoCommon extends BaseOpmode {
         park
     }
 
-    final double normalRPM = 4200;
+    final double normalRPM = 4100;
     final double powershotRPM = 3350;
 
     Point robotStartPosition = new Point (121.92,21.955);
@@ -42,14 +41,14 @@ public class AutoCommon extends BaseOpmode {
 
     Waypoint driveout1 = new Waypoint(transform(10, 100, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 100, Math.toRadians(40));
-    Waypoint driveout2 = new Waypoint(transform(11.62, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
+    Waypoint driveout2 = new Waypoint(transform(11.62, 152.4, noahOrigin), Math.toRadians(100), Math.toRadians(0),
             0.75, 0.5, 20, Math.toRadians(40));
     Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
     Waypoint strafe2 = new Waypoint(transform(48.34, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
-    Waypoint ringposition = new Waypoint(transform(10, 103, noahOrigin), Math.toRadians(180), Math.toRadians(-90),
-            1.0, 1.0, 50, Math.toRadians(40));
+    Waypoint ringposition = new Waypoint(transform(30, 103, noahOrigin), Math.toRadians(180), Math.toRadians(-90),
+            1.0, 1.0, 10, Math.toRadians(40));
     Waypoint aim = new Waypoint(transform(-30.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             1.0, 1.0, 30, Math.toRadians(40));
     Waypoint dropzone1;
@@ -132,6 +131,8 @@ public class AutoCommon extends BaseOpmode {
     double launch2Angle = 0;
     double launch3Angle = 0;
 
+    int currentRings = 0;
+
     public void loop() {
         telemetry.addData("launch 1 angle:", launch1Angle);
         telemetry.addData("launch 2 angle:", launch2Angle);
@@ -146,7 +147,7 @@ public class AutoCommon extends BaseOpmode {
         super.loop();
 
         if (currentState == state.starting) {
-            launchRPM = powershotRPM;
+            launchRPM = normalRPM;
             wobble.grabbingNow = true;
             prepareLaunch = true;
             if (timeElapsedInState() > 500) {
@@ -177,77 +178,23 @@ public class AutoCommon extends BaseOpmode {
                     && timeElapsedInState() > 200) {
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
-                singleLaunch = true;
-                currentState = state.powershot1;
+                goLaunch = true;
+                currentState = state.prelaunch;
             }
         }
 
 
-        else if (currentState == state.powershot1) {
-            singleLaunch = false;
-            if (timeElapsedInState() > launcher.strokeTime * 2) {
+        else if (currentState == state.prelaunch) {
+            if (launcher.disksRemaining == 0) {
+                goLaunch = false;
                 launch1Angle = Math.toDegrees(localizer.robotAngle);
                 follower.initialize();
-                currentState = state.strafe1;
-            }
-        }
-
-        else if (currentState == state.strafe1) {
-            follower.goToWaypoint(strafe1, true);
-            if (follower.overallState == Follower.pathState.passed) {
-                currentState = state.pause2;
-            }
-        }
-
-        else if (currentState == state.pause2) {
-            follower.goToWaypoint(strafe1, true);
-            follower.pidTurn(strafe1.staticAngle);
-            if (Math.abs(localizer.robotAngle - (strafe1.staticAngle)) < Math.toRadians(0.2)
-                    && timeElapsedInState() > 200) {
-                drivetrain.allVelocitiesZero();
-                follower.initialize();
-                singleLaunch = true;
-                currentState = state.powershot2;
-            }
-        }
-
-        else if (currentState == state.powershot2) {
-            singleLaunch = false;
-            if (timeElapsedInState() > launcher.strokeTime * 2) {
-                launch2Angle = Math.toDegrees(localizer.robotAngle);
-                follower.initialize();
-                currentState = state.strafe2;
-            }
-        }
-
-        else if (currentState == state.strafe2) {
-            follower.goToWaypoint(strafe2, true);
-            if (follower.overallState == Follower.pathState.passed) {
-                currentState = state.pause3;
-            }
-        }
-
-        else if (currentState == state.pause3) {
-            follower.goToWaypoint(strafe2, true);
-            follower.pidTurn(strafe2.staticAngle);
-            if (Math.abs(localizer.robotAngle - (strafe2.staticAngle)) < Math.toRadians(0.2)
-                    && timeElapsedInState() > 200) {
-                drivetrain.allVelocitiesZero();
-                follower.initialize();
-                singleLaunch = true;
-                currentState = state.powershot3;
-            }
-        }
-
-        else if (currentState == state.powershot3) {
-            singleLaunch = false;
-            if (timeElapsedInState() > launcher.strokeTime * 2) {
-                launch3Angle = Math.toDegrees(localizer.robotAngle);
-                follower.initialize();
                 currentState = state.ringposition;
-                abortLaunch = true;
+                prepareLaunch = false;
+                launcher.currentState = Launcher.state.load;
             }
         }
+
 
         else if (currentState == state.ringposition) {
             follower.goToWaypoint(ringposition, true);
@@ -272,8 +219,9 @@ public class AutoCommon extends BaseOpmode {
             drivetrain.translateVelocity.x = 0;
             drivetrain.translateVelocity.y = 0.2;
             drivetrain.turnVelocity = 0;
-            if (timeElapsedInState() > 1250) {
+            if (intake.distance.getDistance(DistanceUnit.CM) < 6) {
                 currentState = state.ringcollectreverse;
+                currentRings++;
             }
         }
 
@@ -281,11 +229,14 @@ public class AutoCommon extends BaseOpmode {
             drivetrain.translateVelocity.x = 0;
             drivetrain.translateVelocity.y = -1;
             drivetrain.turnVelocity = 0;
-            if (timeElapsedInState() > 300) {
+            if (timeElapsedInState() > 300 && currentRings == 2) {
                 currentState = state.aim;
                 drivetrain.allVelocitiesZero();
                 follower.initialize();
                 abortLaunch = false;
+            }
+            else if (timeElapsedInState() > 300 && currentRings != 2) {
+                currentState = state.ringcollect;
             }
         }
 

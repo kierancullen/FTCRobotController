@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Intake {
 
     private DcMotorEx intakeMotor;
-    private DistanceSensor distance;
+    public DistanceSensor distance;
     private Servo gateLeft;
     private Servo gateRight;
 
@@ -24,7 +24,7 @@ public class Intake {
     final double reversePower = -0.95;
 
     final double gateStowPos = 0.175;
-    final double gateRaisedPos = 0.335;
+    final double gateRaisedPos = 0.30;
 
     public int ringCount;
     public int ringCountReal;
