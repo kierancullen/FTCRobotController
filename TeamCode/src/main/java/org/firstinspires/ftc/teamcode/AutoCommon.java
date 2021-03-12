@@ -77,6 +77,11 @@ public class AutoCommon extends BaseOpmode {
         pipeline = new CVLinearOpMode();
         webcam.setPipeline(pipeline);
 
+        //These positions will be stored if auto does not complete
+        storage.write("robotPositionx", (float)(0.0));
+        storage.write("robotPositiony", (float)(0.0));
+        storage.write("robotAngle", (float)(0.0));
+
 
     }
 
@@ -256,7 +261,6 @@ public class AutoCommon extends BaseOpmode {
                 if (ringCondition == FOUR || ringCondition == ONE) {
                     currentState = state.ringcollect;
                     intake.currentState = Intake.state.running;
-                    intake.ringCountReal = 0;
                 }
                 else {
                     currentState = state.drivetodropzone;
@@ -338,7 +342,6 @@ public class AutoCommon extends BaseOpmode {
             if (follower.overallState == Follower.pathState.passed) {
                 currentState = state.ringcollect2;
                 intake.currentState = Intake.state.running;
-                intake.ringCountReal = 0;
             }
         }
 
@@ -468,6 +471,13 @@ public class AutoCommon extends BaseOpmode {
         lastState = currentState;
         updateStateMachines();
 
+    }
+
+    public void stop() {
+        //Store our current location for use in teleop
+        storage.write("robotPositionx", (float)localizer.robotPosition.x);
+        storage.write("robotPositiony", (float)localizer.robotPosition.y);
+        storage.write("robotAngle", (float)localizer.robotAngle);
     }
 
     private void updateStateMachines() {

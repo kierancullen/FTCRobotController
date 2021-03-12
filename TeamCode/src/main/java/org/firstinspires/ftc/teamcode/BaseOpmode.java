@@ -19,6 +19,7 @@ public class BaseOpmode extends OpMode {
     SpeedTracker tracker;
     Follower follower;
     Wobble wobble;
+    PreconfigStorage storage;
 
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
@@ -49,10 +50,15 @@ public class BaseOpmode extends OpMode {
         DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "color");
         Servo gateLeft = hardwareMap.get(Servo.class, "leftGate");
         Servo gateRight = hardwareMap.get(Servo.class, "rightGate");
+        Servo leftDefl = hardwareMap.get(Servo.class, "leftDefl");
+        Servo rightDefl = hardwareMap.get(Servo.class, "rightDefl");
         setServoExtendedRange(gateLeft, 500, 2500);
         setServoExtendedRange(gateRight, 500, 2500);
+        setServoExtendedRange(leftDefl, 500, 2500);
+        setServoExtendedRange(rightDefl, 500, 2500);
         gateLeft.setDirection(Servo.Direction.REVERSE);
-        intake = new Intake(intakeMotor, distance, gateLeft, gateRight);
+        rightDefl.setDirection(Servo.Direction.REVERSE);
+        intake = new Intake(intakeMotor, distance, gateLeft, gateRight, leftDefl, rightDefl);
 
         //Create the launcher
         DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "launcher");
@@ -70,6 +76,9 @@ public class BaseOpmode extends OpMode {
         Servo wobbleTiltLeft = hardwareMap.get(Servo.class, "wobbleTiltLeft");
         Servo wobbleTiltRight = hardwareMap.get(Servo.class, "wobbleTiltRight");
         wobble = new Wobble (grabLeft, grabRight, wobbleTiltLeft, wobbleTiltRight);
+
+        //Create the storage
+        storage = new PreconfigStorage(hardwareMap.appContext);
 
         intake.initialize();
         launcher.initialize();

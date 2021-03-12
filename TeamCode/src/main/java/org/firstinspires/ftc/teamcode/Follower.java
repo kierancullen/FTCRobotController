@@ -156,9 +156,7 @@ public class Follower {
             powerTurn = (staticTurnDistance/target.slowDownAngle) * target.goToSpeedTurn;
             powerTurn = Range.clip(powerTurn, -target.goToSpeedTurn, target.goToSpeedTurn);
             powerTurn = minPower(powerTurn, turnMin);
-            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(0.5), 0, 1);
-
-
+            powerTurn *= Range.clip(Math.abs(staticTurnDistance)/Math.toRadians(1.0), 0, 1);
         }
 
         if(relativeXAbs == 0 && relativeYAbs == 0) { //Fixes a case where we divide by 0 if we're exactly on top of the point

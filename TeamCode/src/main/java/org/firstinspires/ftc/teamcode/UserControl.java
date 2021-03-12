@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Legacy.TeleOpPositioner;
+
 //Current class for TeleOp
 @TeleOp(name="UserControl")
 public class UserControl extends BaseOpmode {
@@ -32,10 +35,11 @@ public class UserControl extends BaseOpmode {
         if (gamepad1.right_stick_button) LaunchRPM+= 10;
         if (gamepad1.left_stick_button) LaunchRPM-= 10;
 
+        telemetry.addData("Drivetrain x", drivetrain.translateVelocity.x);
         telemetry.addData("Launch RPM:", LaunchRPM);
         telemetry.addData("Distance to target", follower.distanceTo(launchingTarget));
         telemetry.addData("Rings:", intake.ringCount);
-        telemetry.addData("Rings (real):", intake.ringCountReal);
+        telemetry.addData("Distance:", intake.distance.getDistance(DistanceUnit.CM));
 
         super.loop();
         intake.update(gamepad1.right_bumper, gamepad1.left_bumper);

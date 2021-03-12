@@ -203,7 +203,6 @@ public class AutoCommonNoPS extends BaseOpmode {
                 if (ringCondition == FOUR || ringCondition == ONE) {
                     currentState = state.ringcollect;
                     intake.currentState = Intake.state.running;
-                    intake.ringCountReal = 0;
                 }
                 else {
                     currentState = state.drivetodropzone;
@@ -289,7 +288,6 @@ public class AutoCommonNoPS extends BaseOpmode {
             if (follower.overallState == Follower.pathState.passed) {
                 currentState = state.ringcollect2;
                 intake.currentState = Intake.state.running;
-                intake.ringCountReal = 0;
             }
         }
 

@@ -53,7 +53,7 @@ public class Wobble {
 
     //Call this in the opmode loop
     public void update(boolean prepare, boolean toggleGrab) {
-        if (toggleGrab == true && lastToggleGrab == false && currentState == (state.down)) {
+        if (toggleGrab == true && lastToggleGrab == false && (currentState == (state.down) || currentState == (state.floating))) {
             grabbingNow = !grabbingNow;
         }
 
@@ -96,10 +96,15 @@ public class Wobble {
         else if (currentState == state.floating) {
             tiltLeft.setPosition(floatPos);
             tiltRight.setPosition(floatPos);
-            if (!grabbingNow && timeElapsedInState() > 500) {
-                currentState = state.stowed;
+            if (grabbingNow) {
+                grabLeft.setPosition(grabClosePos);
+                grabRight.setPosition(grabClosePos);
             }
-            else if (prepare && timeElapsedInState() > 500) {
+            else {
+                grabLeft.setPosition(grabOpenPos);
+                grabRight.setPosition(grabOpenPos);
+            }
+            if (prepare && timeElapsedInState() > 500) {
                 currentState = state.down;
                 grabbingNow = false;
             }

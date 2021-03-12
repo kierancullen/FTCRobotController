@@ -68,6 +68,8 @@ public class Drivetrain {
             //when max power is multiplied by this ratio, it will be 1.0, and others less
             scaleDownAmount = 1.0/maxRawPower;
         }
+
+
         tl_power_raw *= scaleDownAmount;
         bl_power_raw *= scaleDownAmount;
         br_power_raw *= scaleDownAmount;
@@ -86,13 +88,23 @@ public class Drivetrain {
         double l;
         double r;
 
-        horiz = 1.5 * (controller.right_trigger * differentialMax) - (controller.left_trigger * differentialMax);
+        horiz = 1.5 * ((controller.right_trigger * differentialMax) - (controller.left_trigger * differentialMax));
         l = -controller.left_stick_y * strafeMax;
         r = -controller.right_stick_y * strafeMax;
 
         translateVelocity.x = horiz;
         translateVelocity.y = (l + r) / 2.0;
-        turnVelocity = (r - l) / 3;
+        if (controller.right_bumper || controller.left_bumper) {
+            if (controller.left_bumper) {
+                turnVelocity = 0.2;
+            }
+            else if (controller.right_bumper) {
+                turnVelocity = -0.2;
+            }
+        }
+        else {
+            turnVelocity = (r - l) / 3;
+        }
     }
 
     //Turns brake mode on or off

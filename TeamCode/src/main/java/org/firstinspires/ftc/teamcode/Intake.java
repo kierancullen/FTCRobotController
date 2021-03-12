@@ -15,24 +15,32 @@ public class Intake {
     public DistanceSensor distance;
     private Servo gateLeft;
     private Servo gateRight;
+    private Servo deflectorLeft;
+    private Servo deflectorRight;
 
     final double PPR = 28.0 * 3.7;
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.8;
+    final double forwardPower = 0.45;
     final double reversePower = -0.95;
 
     final double gateStowPos = 0.175;
-    final double gateRaisedPos = 0.30;
+    final double gateRaisedPos = 0.10;
+
+    final double deflectorDownPos = 0.6;
+    final double deflectorVertPos = 0.3;
+    final double deflectorStowPos = 0.02;
 
     public int ringCount;
     public int ringCountReal;
     final double countThresholdLower = 6.0;
-    final double countThresholdUpper = 15.0;
+    final double countThresholdUpper = 8.0;
     boolean crossedDown;
 
     public boolean gate;
+    public boolean deflectors;
+    public boolean deflectorsStowed;
 
 
     enum state {
@@ -46,11 +54,13 @@ public class Intake {
     public state lastState;
     private long timeAtStateStart;
 
-    public Intake (DcMotor intakeMotor, DistanceSensor distance, Servo gateLeft, Servo gateRight) {
+    public Intake (DcMotor intakeMotor, DistanceSensor distance, Servo gateLeft, Servo gateRight, Servo deflectorLeft, Servo deflectorRight) {
         this.intakeMotor = (DcMotorEx)intakeMotor;
         this.distance = distance;
         this.gateLeft = gateLeft;
         this.gateRight = gateRight;
+        this.deflectorLeft = deflectorLeft;
+        this.deflectorRight = deflectorRight;
     }
 
     //Call this once to get everything set up
@@ -66,6 +76,12 @@ public class Intake {
         gateLeft.setPosition(gateStowPos);
         gateRight.setPosition(gateStowPos);
         gate = true;
+
+        deflectorLeft.setPosition(deflectorStowPos);
+        deflectorRight.setPosition(deflectorStowPos);
+        deflectors = false;
+        deflectorsStowed = false;
+
     }
 
     //Call this in the opmode loop
@@ -79,8 +95,23 @@ public class Intake {
             gateLeft.setPosition(gateStowPos);
             gateRight.setPosition(gateStowPos);
         }
+        if (deflectorsStowed) {
+            deflectorLeft.setPosition(deflectorStowPos);
+            deflectorRight.setPosition(deflectorStowPos);
+        }
+        else {
+            if (deflectors) {
+                deflectorLeft.setPosition(deflectorDownPos);
+                deflectorRight.setPosition(deflectorDownPos);
+            }
+            else {
+                deflectorLeft.setPosition(deflectorVertPos);
+                deflectorRight.setPosition(deflectorVertPos);
+            }
+        }
 
-        //Count up if the distance sensor sees a ring and it hasn't been too little time since it last triggered
+
+
         if (distance.getDistance(DistanceUnit.CM) < countThresholdLower) {
             crossedDown = true;
         }
