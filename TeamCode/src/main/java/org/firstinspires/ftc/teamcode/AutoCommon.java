@@ -36,7 +36,7 @@ public class AutoCommon extends BaseOpmode {
     }
 
     final double normalRPM = 4100;
-    final double powershotRPM = 3300;
+    final double powershotRPM = 3250;
 
     Point robotStartPosition = new Point (121.92,21.955);
     Point noahOrigin = new Point (121.92, 21.955); //The point that all of Noah's points are relative to
