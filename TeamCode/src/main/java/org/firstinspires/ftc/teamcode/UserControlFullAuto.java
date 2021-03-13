@@ -9,8 +9,8 @@ public class UserControlFullAuto extends BaseOpmode{
 
     Point currentTarget;
     double currentAngle;
-    Point baseTarget = new Point (60.92, 152.4);
-    double baseAngle = Math.toRadians(90);
+    Point baseTarget = new Point (122.994, 168.968);
+    double baseAngle = Math.toRadians(99.2489);
 
     double launchRPM;
     final double powershotRPM = 3350;
@@ -48,6 +48,7 @@ public class UserControlFullAuto extends BaseOpmode{
         storage.read("robotPositionx") == 0 &&
         storage.read("robotPositiony") == 0 &&
         storage.read("robotAngle") == 0) {
+            //For testing purposes
             telemetry.addLine("Auto was not run");
             storedPositionx =  (float)baseTarget.x;
             storedPositiony = (float)baseTarget.y;
@@ -57,6 +58,7 @@ public class UserControlFullAuto extends BaseOpmode{
             storedPositionx =  storage.read("robotPositionx");
             storedPositiony = storage.read("robotPositiony");
             storedAngle = storage.read("robotAngle");
+            telemetry.addData("Loaded position from auto:", "x:" + storedPositionx + " y:" + storedPositiony + " angle:" + storedAngle);
         }
 
 
@@ -80,7 +82,7 @@ public class UserControlFullAuto extends BaseOpmode{
         telemetry.addData("Wobble state:", wobble.currentState);
         telemetry.addData("Wobble grabbing?:", wobble.grabbingNow);
         super.loop();
-        goLaunch = gamepad1.x; 
+        goLaunch = gamepad1.x;
         done = gamepad1.a;
         powerShot = gamepad1.y;
 

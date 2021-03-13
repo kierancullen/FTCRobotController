@@ -22,11 +22,12 @@ public class Intake {
     final double stallThreshold = 100; //in RPM
     final long reverseTime = 1000;
 
-    final double forwardPower = 0.45;
+    final double forwardPower = 0.3;
     final double reversePower = -0.95;
 
     final double gateStowPos = 0.175;
-    final double gateRaisedPos = 0.10;
+    final double gateRaisedPos = 0.7;
+    final double gateAutoPos = 0.30;
 
     final double deflectorDownPos = 0.6;
     final double deflectorVertPos = 0.3;
@@ -39,6 +40,7 @@ public class Intake {
     boolean crossedDown;
 
     public boolean gate;
+    public boolean gatePushing;
     public boolean deflectors;
     public boolean deflectorsStowed;
 
@@ -88,8 +90,15 @@ public class Intake {
     public void update(boolean trigger, boolean reverse) {
         ringCountReal = ringCount/2;
         if (gate) {
-            gateLeft.setPosition(gateRaisedPos);
-            gateRight.setPosition(gateRaisedPos);
+            if (gatePushing) {
+                gateLeft.setPosition(gateAutoPos);
+                gateRight.setPosition(gateAutoPos);
+            }
+            else {
+                gateLeft.setPosition(gateRaisedPos);
+                gateRight.setPosition(gateRaisedPos);
+            }
+
         }
         else {
             gateLeft.setPosition(gateStowPos);

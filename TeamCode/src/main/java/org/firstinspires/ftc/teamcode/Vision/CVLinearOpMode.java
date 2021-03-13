@@ -33,8 +33,8 @@ public class CVLinearOpMode extends OpenCvPipeline {
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
 
-        final int FOUR_RING_THRESHOLD = 133;
-        final int ONE_RING_THRESHOLD = 120;
+        final int FOUR_RING_THRESHOLD = 147;
+        final int ONE_RING_THRESHOLD = 130;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
