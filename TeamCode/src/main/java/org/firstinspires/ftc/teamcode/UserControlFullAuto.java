@@ -11,6 +11,9 @@ public class UserControlFullAuto extends BaseOpmode{
     double currentAngle;
     Point baseTarget = new Point (122.994, 168.968);
     double baseAngle = Math.toRadians(99.2489);
+    Point baseTargetPowershot = new Point (152.4, 174.355);
+    double baseAnglePowershot = Math.toRadians(90);
+    double incrementAnglePowershot = Math.toRadians(5.5);
 
     double launchRPM;
     final double powershotRPM = 3350;
@@ -27,7 +30,10 @@ public class UserControlFullAuto extends BaseOpmode{
         floating,
         disabled,
         launching,
-        powershot
+        powershot,
+        powershotNavigatingRight,
+        powershotNavigatingLeft,
+        powershotNavigatingCenter,
     }
 
     public state currentState;
@@ -73,10 +79,13 @@ public class UserControlFullAuto extends BaseOpmode{
     boolean goLaunch;
     boolean done;
     boolean powerShot;
+    boolean powerShotNavigating;
+    boolean lastStart;
 
     boolean prepareLaunch, triggerLaunch, abortLaunch, triggerSingleLaunch;
 
     public void loop() {
+        telemetry.addData("Navigating to powershot?", powerShotNavigating);
         telemetry.addData("Current state:", currentState);
         telemetry.addData("Launcher state:", launcher.currentState);
         telemetry.addData("Wobble state:", wobble.currentState);
@@ -85,6 +94,10 @@ public class UserControlFullAuto extends BaseOpmode{
         goLaunch = gamepad1.x;
         done = gamepad1.a;
         powerShot = gamepad1.y;
+
+        //Update these all the time
+        baseTargetPowershot = new Point (currentTarget.x + 25.406, currentTarget.y + 5.367);
+        baseAnglePowershot = currentAngle - Math.toRadians(9.4489);
 
         if (wobble.currentState != Wobble.state.stowed) intake.deflectorsStowed = true;
         else {intake.deflectors = true; intake.deflectorsStowed = false;}
@@ -105,6 +118,7 @@ public class UserControlFullAuto extends BaseOpmode{
             else if (done && timeElapsedInState() > 500) { //If we turn off navigation, go to the disabled state
                 currentState = state.disabled;
                 drivetrain.setBrake(true);
+                abortLaunch = true;
             }
         }
 
@@ -133,12 +147,22 @@ public class UserControlFullAuto extends BaseOpmode{
                 intake.currentState = Intake.state.stopped;
             }
 
+            else if (goLaunch && timeElapsedInState() > 500) {
+                currentTarget = new Point(localizer.robotPosition.x, localizer.robotPosition.y);
+                currentAngle = localizer.robotAngle;
+                currentState = state.launching;
+                drivetrain.allVelocitiesZero();
+                triggerLaunch = true;
+            }
+
             if (powerShot) {
                 currentState = state.powershot;
                 prepareLaunch = true;
                 intake.currentState = Intake.state.stopped;
                 launchRPM = powershotRPM;
                 drivetrain.setBrake(true);
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
             }
 
 
@@ -156,8 +180,121 @@ public class UserControlFullAuto extends BaseOpmode{
                 intake.currentState = Intake.state.running;
                 abortLaunch = true;
                 launchRPM = normalRPM;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
             }
 
+            if (gamepad1.dpad_right) {
+                currentState = state.powershotNavigatingRight;
+            }
+            if (gamepad1.dpad_left) {
+                currentState = state.powershotNavigatingLeft;
+            }
+            if (gamepad1.b) {
+                currentState = state.powershotNavigatingCenter;
+            }
+
+        }
+
+        else if (currentState == state.powershotNavigatingRight) {
+            intake.deflectorsStowed = true;
+            if (!gamepadAllZero(gamepad1) && timeElapsedInState() > 500) {
+                currentState = state.powershot;
+            }
+            else {
+                follower.goToWaypoint(new Waypoint(baseTargetPowershot, baseAnglePowershot - incrementAnglePowershot, Math.toRadians(90), 1.0, 1.0, 50, Math.toRadians(50)), true);
+            }
+            if (Math.abs(localizer.robotAngle - (baseAnglePowershot-incrementAnglePowershot)) < Math.toRadians(0.2)
+                    && timeElapsedInState() > 200) {
+                if (!gamepadAllZero(gamepad1)) {
+                    drivetrain.setVelocityFromGamepad(gamepad1);
+                }
+                else {
+                    drivetrain.allVelocitiesZero();
+                }
+            }
+            if (timeElapsedInState() > 500 && powerShot) {
+                triggerSingleLaunch = true;
+                currentState = state.powershot;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
+            if (done) {
+                drivetrain.setBrake(true);
+                currentState = state.disabled;
+                intake.currentState = Intake.state.running;
+                abortLaunch = true;
+                launchRPM = normalRPM;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
+        }
+
+        else if (currentState == state.powershotNavigatingLeft) {
+            intake.deflectorsStowed = true;
+            if (!gamepadAllZero(gamepad1) && timeElapsedInState() > 500) {
+                currentState = state.powershot;
+            }
+            else {
+                follower.goToWaypoint(new Waypoint(baseTargetPowershot, baseAnglePowershot + incrementAnglePowershot, Math.toRadians(90), 1.0, 1.0, 50, Math.toRadians(50)), true);
+            }
+            if (Math.abs(localizer.robotAngle - (baseAnglePowershot+incrementAnglePowershot)) < Math.toRadians(0.2)
+                    && timeElapsedInState() > 200) {
+                if (!gamepadAllZero(gamepad1)) {
+                    drivetrain.setVelocityFromGamepad(gamepad1);
+                }
+                else {
+                    drivetrain.allVelocitiesZero();
+                }
+            }
+            if (timeElapsedInState() > 500 && powerShot) {
+                triggerSingleLaunch = true;
+                currentState = state.powershot;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
+            if (done) {
+                drivetrain.setBrake(true);
+                currentState = state.disabled;
+                intake.currentState = Intake.state.running;
+                abortLaunch = true;
+                launchRPM = normalRPM;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
+        }
+        else if (currentState == state.powershotNavigatingCenter) {
+            intake.deflectorsStowed = true;
+            if (!gamepadAllZero(gamepad1) && timeElapsedInState() > 500) {
+                currentState = state.powershot;
+            }
+            else {
+                follower.goToWaypoint(new Waypoint(baseTargetPowershot, baseAnglePowershot, Math.toRadians(90), 1.0, 1.0, 50, Math.toRadians(50)), true);
+            }
+            if (Math.abs(localizer.robotAngle - (baseAnglePowershot)) < Math.toRadians(0.2)
+                    && timeElapsedInState() > 200) {
+                if (!gamepadAllZero(gamepad1)) {
+                    drivetrain.setVelocityFromGamepad(gamepad1);
+                }
+                else {
+                    drivetrain.allVelocitiesZero();
+                }
+            }
+            if (timeElapsedInState() > 500 && powerShot) {
+                triggerSingleLaunch = true;
+                currentState = state.powershot;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
+            if (done) {
+                drivetrain.setBrake(true);
+                currentState = state.disabled;
+                intake.currentState = Intake.state.running;
+                abortLaunch = true;
+                launchRPM = normalRPM;
+                drivetrain.allVelocitiesZero();
+                follower.initialize();
+            }
         }
 
         else if (currentState == state.launching) {
@@ -174,9 +311,10 @@ public class UserControlFullAuto extends BaseOpmode{
             }
         }
 
+
         intake.update(false, gamepad1.back);
         launcher.update(launchRPM, prepareLaunch, triggerLaunch, abortLaunch, triggerSingleLaunch);
-        wobble.update(gamepad1.dpad_left, gamepad1.dpad_up); //Wobble control is allowed anytime
+        wobble.update(gamepad1.dpad_down, gamepad1.dpad_up); //Wobble control is allowed anytime
 
 
         if (currentState != lastState) {

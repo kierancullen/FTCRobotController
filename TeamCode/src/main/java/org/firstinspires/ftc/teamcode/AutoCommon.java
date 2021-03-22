@@ -36,7 +36,7 @@ public class AutoCommon extends BaseOpmode {
     }
 
     final double normalRPM = 4100;
-    final double powershotRPM = 3250;
+    final double powershotRPM = 3300;
 
     Point robotStartPosition = new Point (121.92,21.955);
     Point noahOrigin = new Point (121.92, 21.955); //The point that all of Noah's points are relative to
@@ -45,7 +45,7 @@ public class AutoCommon extends BaseOpmode {
             0.75, 0.5, 100, Math.toRadians(40));
     Waypoint driveout2 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(90), Math.toRadians(0),
             0.75, 0.5, 20, Math.toRadians(40));
-    Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(96), Math.toRadians(90),
+    Waypoint strafe1 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(95), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));
     Waypoint strafe2 = new Waypoint(transform(31.48, 152.4, noahOrigin), Math.toRadians(85), Math.toRadians(90),
             0.5, 0.7, 20, Math.toRadians(40));

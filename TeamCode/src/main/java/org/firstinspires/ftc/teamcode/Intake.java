@@ -155,6 +155,9 @@ public class Intake {
             if (trigger && (timeElapsedInState() > 500)) {
                 currentState = state.running;
             }
+            if (reverse) {
+                intakeMotor.setPower(reversePower);
+            }
         }
 
         else if (currentState == state.unjamming) {
