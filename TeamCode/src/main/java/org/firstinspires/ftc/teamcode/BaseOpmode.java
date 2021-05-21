@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -21,8 +22,6 @@ public class BaseOpmode extends OpMode {
     Follower follower;
     Wobble wobble;
     PreconfigStorage storage;
-
-    DcMotor intakeMotorAux;
 
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
@@ -50,30 +49,19 @@ public class BaseOpmode extends OpMode {
 
         //Create the intake
         DcMotor intakeMotor = hardwareMap.get(DcMotor.class, "intake");
-        DistanceSensor distance = hardwareMap.get(DistanceSensor.class, "color");
-        Servo gateLeft = hardwareMap.get(Servo.class, "leftGate");
-        Servo gateRight = hardwareMap.get(Servo.class, "rightGate");
-        Servo leftDefl = hardwareMap.get(Servo.class, "leftDefl");
-        Servo rightDefl = hardwareMap.get(Servo.class, "rightDefl");
-        setServoExtendedRange(gateLeft, 500, 2500);
-        setServoExtendedRange(gateRight, 500, 2500);
-        setServoExtendedRange(leftDefl, 500, 2500);
-        setServoExtendedRange(rightDefl, 500, 2500);
-        gateLeft.setDirection(Servo.Direction.REVERSE);
-        rightDefl.setDirection(Servo.Direction.REVERSE);
-        intake = new Intake(intakeMotor, distance, gateLeft, gateRight, leftDefl, rightDefl);
-        intakeMotorAux = hardwareMap.get(DcMotor.class, "intakeAux");
-        intakeMotorAux.setDirection(DcMotorSimple.Direction.REVERSE);
+        CRServo feedLeft = hardwareMap.get(CRServo.class, "feedLeft");
+        CRServo feedRight = hardwareMap.get(CRServo.class, "feedRight");
+        feedRight.setDirection(CRServo.Direction.REVERSE);
+
+        intake = new Intake(intakeMotor, feedLeft, feedRight);
 
         //Create the launcher
         DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "launcher");
-        Servo tiltServo = hardwareMap.get(Servo.class, "tiltServo");
+        DcMotor turretMotor = hardwareMap.get(DcMotor.class, "turret");
         Servo pushServo = hardwareMap.get(Servo.class, "pushServo");
-        tiltServo.setDirection(Servo.Direction.REVERSE);
         pushServo.setDirection(Servo.Direction.REVERSE);
-        setServoExtendedRange(tiltServo, 500, 2500);
         setServoExtendedRange(pushServo, 500, 2500);
-        launcher = new Launcher(launcherMotor, tiltServo, pushServo);
+        launcher = new Launcher(launcherMotor, pushServo, turretMotor);
 
         //Create the wobble goal grabber
         Servo grabLeft = hardwareMap.get(Servo.class, "grabLeft");
@@ -92,6 +80,10 @@ public class BaseOpmode extends OpMode {
         drivetrain.setBrake(false);
     }
 
+    public void init_loop() {
+        // Runs like loop() but in init; use to home the turret
+        launcher.home();
+    }
 
     public void start() {
         localizer.setPosition(new Point(0,0),  Math.toRadians(90)); //Make sure we're at the origin (TeleOp and Autonomous opmodes can change this if needed)

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -12,11 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Intake {
 
     private DcMotorEx intakeMotor;
-    public DistanceSensor distance;
-    private Servo gateLeft;
-    private Servo gateRight;
-    private Servo deflectorLeft;
-    private Servo deflectorRight;
+    private CRServo feedLeft;
+    private CRServo feedRight;
 
     final double PPR = 28.0 * 3.7;
     final double stallThreshold = 100; //in RPM
@@ -24,6 +22,9 @@ public class Intake {
 
     final double forwardPower = 0.3;
     final double reversePower = -0.95;
+
+    final double feedForwardPower = 0.3; // TODO fill in
+    final double feedReversePower = -0.95; // TODO fill in
 
     final double gateStowPos = 0.175;
     final double gateRaisedPos = 0.7;
@@ -56,13 +57,10 @@ public class Intake {
     public state lastState;
     private long timeAtStateStart;
 
-    public Intake (DcMotor intakeMotor, DistanceSensor distance, Servo gateLeft, Servo gateRight, Servo deflectorLeft, Servo deflectorRight) {
+    public Intake (DcMotor intakeMotor, CRServo feedLeft, CRServo feedRight) {
         this.intakeMotor = (DcMotorEx)intakeMotor;
-        this.distance = distance;
-        this.gateLeft = gateLeft;
-        this.gateRight = gateRight;
-        this.deflectorLeft = deflectorLeft;
-        this.deflectorRight = deflectorRight;
+        this.feedLeft = feedLeft;
+        this.feedRight = feedRight;
     }
 
     //Call this once to get everything set up
@@ -73,68 +71,16 @@ public class Intake {
 
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        ringCount = 0;
-
-        gateLeft.setPosition(gateStowPos);
-        gateRight.setPosition(gateStowPos);
-        gate = true;
-
-        deflectorLeft.setPosition(deflectorStowPos);
-        deflectorRight.setPosition(deflectorStowPos);
-        deflectors = false;
-        deflectorsStowed = false;
-
     }
 
     //Call this in the opmode loop
     public void update(boolean trigger, boolean reverse) {
-        ringCountReal = ringCount/2;
-        if (gate) {
-            if (gatePushing) {
-                gateLeft.setPosition(gateAutoPos);
-                gateRight.setPosition(gateAutoPos);
-            }
-            else {
-                gateLeft.setPosition(gateRaisedPos);
-                gateRight.setPosition(gateRaisedPos);
-            }
-
-        }
-        else {
-            gateLeft.setPosition(gateStowPos);
-            gateRight.setPosition(gateStowPos);
-        }
-        if (deflectorsStowed) {
-            deflectorLeft.setPosition(deflectorStowPos);
-            deflectorRight.setPosition(deflectorStowPos);
-        }
-        else {
-            if (deflectors) {
-                deflectorLeft.setPosition(deflectorDownPos);
-                deflectorRight.setPosition(deflectorDownPos);
-            }
-            else {
-                deflectorLeft.setPosition(deflectorVertPos);
-                deflectorRight.setPosition(deflectorVertPos);
-            }
-        }
-
-
-
-        if (distance.getDistance(DistanceUnit.CM) < countThresholdLower) {
-            crossedDown = true;
-        }
-        if (distance.getDistance(DistanceUnit.CM) > countThresholdUpper) {
-            if (crossedDown) {
-                ringCount++;
-                crossedDown = false;
-            }
-        }
-
 
         double currentVelocity = (intakeMotor.getVelocity() / PPR * 60.0); //in RPM
         if (currentState == state.running) {
             intakeMotor.setPower(forwardPower);
+            feedLeft.setPower(feedForwardPower);
+            feedRight.setPower(feedForwardPower);
             if (reverse) {
                 currentState = state.reversing;
             }
@@ -145,6 +91,8 @@ public class Intake {
 
         else if (currentState == state.reversing) {
             intakeMotor.setPower(reversePower);
+            feedLeft.setPower(feedReversePower);
+            feedRight.setPower(feedReversePower);
             if (!reverse) {
                 currentState = state.running;
             }
@@ -152,16 +100,22 @@ public class Intake {
 
         else if (currentState == state.stopped) {
             intakeMotor.setPower(0);
+            feedLeft.setPower(0);
+            feedRight.setPower(0);
             if (trigger && (timeElapsedInState() > 500)) {
                 currentState = state.running;
             }
             if (reverse) {
                 intakeMotor.setPower(reversePower);
+                feedLeft.setPower(feedReversePower);
+                feedRight.setPower(feedReversePower);
             }
         }
 
         else if (currentState == state.unjamming) {
             intakeMotor.setPower(reversePower);
+            feedLeft.setPower(feedReversePower);
+            feedRight.setPower(feedReversePower);
             if (timeElapsedInState() > reverseTime) {
                 currentState = state.running;
             }

@@ -218,10 +218,10 @@ public class AutoCommonNoPS extends BaseOpmode {
             drivetrain.translateVelocity.x = 0;
             drivetrain.translateVelocity.y = 0.2;
             drivetrain.turnVelocity = 0;
-            if (intake.distance.getDistance(DistanceUnit.CM) < 6) {
+            /*if (intake.distance.getDistance(DistanceUnit.CM) < 6) {
                 currentState = state.ringcollectreverse;
                 currentRings++;
-            }
+            }*/
         }
 
         else if (currentState == state.ringcollectreverse) {
