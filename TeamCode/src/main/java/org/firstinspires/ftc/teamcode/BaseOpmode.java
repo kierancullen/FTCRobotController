@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,6 +21,8 @@ public class BaseOpmode extends OpMode {
     Follower follower;
     Wobble wobble;
     PreconfigStorage storage;
+
+    DcMotor intakeMotorAux;
 
     //Use these to correct if an odometry wheel seems to just rotate more or less than another one
     final double odometryRightBias = 1.0;
@@ -59,6 +62,8 @@ public class BaseOpmode extends OpMode {
         gateLeft.setDirection(Servo.Direction.REVERSE);
         rightDefl.setDirection(Servo.Direction.REVERSE);
         intake = new Intake(intakeMotor, distance, gateLeft, gateRight, leftDefl, rightDefl);
+        intakeMotorAux = hardwareMap.get(DcMotor.class, "intakeAux");
+        intakeMotorAux.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Create the launcher
         DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "launcher");

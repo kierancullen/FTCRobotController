@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 
 @TeleOp(name="UserControlFullAuto")
-public class UserControlFullAuto extends BaseOpmode{
+public class  UserControlFullAuto extends BaseOpmode{
 
     Point currentTarget;
     double currentAngle;
@@ -85,6 +85,7 @@ public class UserControlFullAuto extends BaseOpmode{
     boolean prepareLaunch, triggerLaunch, abortLaunch, triggerSingleLaunch;
 
     public void loop() {
+        intakeMotorAux.setPower(1);
         telemetry.addData("Navigating to powershot?", powerShotNavigating);
         telemetry.addData("Current state:", currentState);
         telemetry.addData("Launcher state:", launcher.currentState);
